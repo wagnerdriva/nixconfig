@@ -24,6 +24,17 @@ as preferências do usuário `wagner`.
 O visual usa a paleta Broken Pine, Niri, Waybar, Fuzzel, SwayNC, Hyprlock e o
 wallpaper local em `assets/wallpapers/black-hole.png`.
 
+## Ferramentas de desenvolvimento
+
+O Home Manager instala Orca (`orca-ide`), Codex, Claude Code, `btop`, Node.js,
+pnpm e utilitários básicos de desenvolvimento. `codex` já abre usando o proxy
+da Driva; `codex-openai` preserva o cliente sem esse override. Para Claude Code,
+há também os aliases `claude-max`, `claude-codex` e `claude-glm`.
+
+A credencial compartilhada pelos dois clientes fica somente na máquina, em
+`~/.config/driva/proxy-key`, com permissão `0600`. Esse arquivo não pertence ao
+repo e nunca passa pelo Nix store.
+
 ## Armazenamento planejado
 
 O instalador apaga o NVMe inteiro e cria:
@@ -72,3 +83,6 @@ lado da barra de espaço funcionando como `Mod`, mais próxima da posição de
 - `Mod+Shift+1` até `Mod+Shift+9`: mover a janela;
 - `Alt+L`: bloquear a sessão;
 - `Mod+Shift+/`: mostrar todos os atalhos.
+
+O teclado mantém `Esc` e `Caps Lock` em suas funções normais; apenas `Alt` e
+`Super` esquerdos são trocados para aproximar `Mod` da posição de `Command`.

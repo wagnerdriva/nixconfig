@@ -1,5 +1,6 @@
 { pkgs, primaryUser, ... }: {
   imports = [
+    ./development.nix
     ./fuzzel.nix
     ./hypridle.nix
     ./hyprlock.nix
@@ -15,7 +16,6 @@
     stateVersion = "26.05";
 
     packages = with pkgs; [
-      bottom
       eog
       google-chrome
       localsend

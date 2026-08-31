@@ -16,7 +16,7 @@ in {
       keyboard.xkb = {
         layout = "us";
         variant = "intl";
-        options = "caps:swapescape,altwin:swap_lalt_lwin";
+        options = "altwin:swap_lalt_lwin";
       };
     };
 
