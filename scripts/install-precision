@@ -1,0 +1,67 @@
+#!/usr/bin/env bash
+
+set -euo pipefail
+
+die() {
+  echo "Erro: $*" >&2
+  exit 1
+}
+
+[[ ${EUID} -eq 0 ]] || die "execute como root"
+[[ $# -eq 1 ]] || die "uso: bash scripts/install-precision /dev/nvme0n1"
+[[ -d /sys/firmware/efi/efivars ]] || die "o live USB não iniciou em modo UEFI"
+
+DISK=$1
+EXPECTED_DISK=/dev/nvme0n1
+SCRIPT_DIR=$(cd -- "$(dirname -- "${BASH_SOURCE[0]}")" && pwd)
+REPO=$(realpath "$SCRIPT_DIR/..")
+INSTALL_USER=wagner
+
+[[ -b "$DISK" ]] || die "disco inexistente: $DISK"
+REAL_DISK=$(readlink -f "$DISK")
+[[ $(lsblk -dn -o TYPE "$REAL_DISK") == "disk" ]] || \
+  die "$DISK não representa um disco inteiro"
+[[ "$REAL_DISK" == "$EXPECTED_DISK" ]] || \
+  die "esta configuração foi revisada somente para $EXPECTED_DISK"
+
+MODEL=$(lsblk -dn -o MODEL "$REAL_DISK")
+[[ "$MODEL" == *"PC401"* ]] || \
+  die "modelo inesperado: $MODEL (esperado: SK hynix PC401)"
+
+GPU_LIST=$(lspci -D | grep -E 'VGA|3D' || true)
+grep -Eq '^0000:00:02\.0 .*Intel' <<< "$GPU_LIST" || \
+  die "GPU Intel não encontrada no endereço esperado 0000:00:02.0"
+grep -Eq '^0000:01:00\.0 .*NVIDIA' <<< "$GPU_LIST" || \
+  die "GPU NVIDIA não encontrada no endereço esperado 0000:01:00.0"
+
+mountpoint -q /mnt && die "/mnt já está montado; reinicie o live USB antes de tentar novamente"
+cryptsetup status cryptroot >/dev/null 2>&1 && \
+  die "o volume cryptroot já está aberto; reinicie o live USB antes de tentar novamente"
+
+echo "Disco selecionado:"
+lsblk -o NAME,PATH,SIZE,MODEL,TYPE,FSTYPE,MOUNTPOINTS "$REAL_DISK"
+echo
+echo "GPUs detectadas:"
+echo "$GPU_LIST"
+echo
+echo "ATENÇÃO: todos os dados de $REAL_DISK serão apagados."
+read -r -p "Digite APAGAR $REAL_DISK para continuar: " CONFIRM
+[[ "$CONFIRM" == "APAGAR $REAL_DISK" ]] || die "confirmação incorreta"
+
+echo "Criando GPT, LUKS2 e Btrfs..."
+nix run "$REPO#disko" -- --mode disko --flake "$REPO#precision"
+
+mkdir -p "/mnt/home/$INSTALL_USER/nixos-config"
+cp -a "$REPO"/. "/mnt/home/$INSTALL_USER/nixos-config/"
+
+echo "Instalando o NixOS..."
+nixos-install --flake "$REPO#precision" --no-root-passwd
+
+echo "Defina agora a senha do usuário $INSTALL_USER."
+nixos-enter --root /mnt -c "passwd '$INSTALL_USER'"
+nixos-enter --root /mnt -c \
+  "chown -R '$INSTALL_USER':users '/home/$INSTALL_USER/nixos-config'"
+
+sync
+echo
+echo "Instalação concluída. Reinicie e retire o live USB."
