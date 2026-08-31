@@ -2,6 +2,12 @@
 
 set -euo pipefail
 
+# Some graphical NixOS live images ship the new CLI disabled even though Nix
+# itself is available. Keep the setting local to this installer and its child
+# processes, including nixos-install.
+export NIX_CONFIG="${NIX_CONFIG:-}
+experimental-features = nix-command flakes"
+
 die() {
   echo "Erro: $*" >&2
   exit 1
