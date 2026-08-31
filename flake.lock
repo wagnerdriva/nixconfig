@@ -131,30 +131,12 @@
         "type": "github"
       }
     },
-    "ramos-config": {
-      "flake": false,
-      "locked": {
-        "lastModified": 1786212744,
-        "narHash": "sha256-4RH5g3EGg0IsgBrNWTBu9lm8+X0ajRUWRdVgy/wvdJ4=",
-        "owner": "ramosrafh",
-        "repo": "nixconfig",
-        "rev": "f7dcdf28a83f7c5b676f554c66fc6f3c969d8528",
-        "type": "github"
-      },
-      "original": {
-        "owner": "ramosrafh",
-        "repo": "nixconfig",
-        "rev": "f7dcdf28a83f7c5b676f554c66fc6f3c969d8528",
-        "type": "github"
-      }
-    },
     "root": {
       "inputs": {
         "disko": "disko",
         "home-manager": "home-manager",
         "niri-flake": "niri-flake",
-        "nixpkgs": "nixpkgs",
-        "ramos-config": "ramos-config"
+        "nixpkgs": "nixpkgs"
       }
     },
     "xwayland-satellite-stable": {

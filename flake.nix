@@ -18,23 +18,16 @@
       url = "github:sodiboo/niri-flake";
       inputs.nixpkgs.follows = "nixpkgs";
     };
-
-    # A pinned visual reference. We only reuse the wallpaper; the configuration
-    # itself lives in this repository and can evolve independently.
-    ramos-config = {
-      url = "github:ramosrafh/nixconfig/f7dcdf28a83f7c5b676f554c66fc6f3c969d8528";
-      flake = false;
-    };
   };
 
-  outputs = inputs@{ nixpkgs, home-manager, disko, niri-flake, ... }:
+  outputs = { nixpkgs, home-manager, disko, niri-flake, ... }:
     let
       system = "x86_64-linux";
       primaryUser = "wagner";
     in {
       nixosConfigurations.precision = nixpkgs.lib.nixosSystem {
         inherit system;
-        specialArgs = { inherit inputs primaryUser; };
+        specialArgs = { inherit primaryUser; };
 
         modules = [
           ./hosts/precision
@@ -50,7 +43,7 @@
               useUserPackages = true;
               backupFileExtension = "hm-backup";
               users.${primaryUser} = import ./modules/home;
-              extraSpecialArgs = { inherit inputs primaryUser; };
+              extraSpecialArgs = { inherit primaryUser; };
             };
           }
         ];

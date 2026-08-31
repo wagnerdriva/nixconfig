@@ -1,6 +1,6 @@
-{ inputs, ... }:
+{ ... }:
 let
-  wallpaper = "${inputs.ramos-config}/assets/wallpapers/current_wallpaper.jpg";
+  wallpaper = ../../assets/wallpapers/black-hole.png;
 in {
   programs.hyprlock = {
     enable = true;

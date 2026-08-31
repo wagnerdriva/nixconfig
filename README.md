@@ -22,8 +22,7 @@ descreve o sistema compartilhável e `modules/home` descreve a sessão gráfica 
 as preferências do usuário `wagner`.
 
 O visual usa a paleta Broken Pine, Niri, Waybar, Fuzzel, SwayNC, Hyprlock e o
-wallpaper fixado no commit de referência do Ramos. O código da configuração
-visual é local; somente o arquivo de wallpaper vem do repositório dele.
+wallpaper local em `assets/wallpapers/black-hole.png`.
 
 ## Armazenamento planejado
 

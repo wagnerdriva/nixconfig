@@ -1,7 +1,7 @@
-{ inputs, pkgs, ... }:
+{ pkgs, ... }:
 let
   colors = import ./colors.nix;
-  wallpaper = "${inputs.ramos-config}/assets/wallpapers/current_wallpaper.jpg";
+  wallpaper = ../../assets/wallpapers/black-hole.png;
 in {
   programs.niri.settings = {
     input = {
