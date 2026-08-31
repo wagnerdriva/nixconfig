@@ -35,14 +35,10 @@ O alvo esperado é `/dev/nvme0n1`, modelo PC401, com aproximadamente 954 GiB.
 
 ## Instalação
 
-Depois que este diretório virar um repositório público, o fluxo no live USB
-será apenas:
+No live USB, abra um terminal e execute:
 
 ```bash
-sudo -i
-git clone URL_DO_REPOSITORIO /tmp/nixos-config
-cd /tmp/nixos-config
-bash scripts/install-precision /dev/nvme0n1
+git clone https://github.com/wagnerdriva/nixconfig.git /tmp/n && cd /tmp/n && sudo bash scripts/install-precision /dev/nvme0n1
 ```
 
 O script exige que o modelo do NVMe corresponda ao PC401 e pede a confirmação
