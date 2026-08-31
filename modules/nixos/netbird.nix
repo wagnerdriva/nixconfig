@@ -9,7 +9,7 @@
     # strings in config.json.
     clients.default.config.ManagementURL = {
       Scheme = "https";
-      Host = "netbird.driva.io";
+      Host = "netbird.driva.io:443";
     };
   };
 }
