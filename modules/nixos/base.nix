@@ -37,13 +37,31 @@
   };
 
   services = {
+    avahi = {
+      enable = true;
+      nssmdns4 = true;
+      openFirewall = true;
+      publish = {
+        enable = true;
+        addresses = true;
+        workstation = true;
+      };
+    };
     blueman.enable = true;
     fwupd.enable = true;
     fstrim.enable = true;
     thermald.enable = true;
     power-profiles-daemon.enable = true;
     upower.enable = true;
-    openssh.enable = false;
+    openssh = {
+      enable = true;
+      openFirewall = true;
+      settings = {
+        PasswordAuthentication = false;
+        KbdInteractiveAuthentication = false;
+        PermitRootLogin = "no";
+      };
+    };
   };
 
   zramSwap = {
@@ -63,6 +81,9 @@
       "storage"
     ];
     shell = pkgs.fish;
+    openssh.authorizedKeys.keys = [
+      "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIC/X+zSF5di3nf9MOjoWXCpLhvQqJjc2kd+VAImDQgZ+"
+    ];
   };
 
   programs.fish.enable = true;
@@ -80,4 +101,3 @@
     nvme-cli
   ];
 }
-
