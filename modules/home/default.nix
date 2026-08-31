@@ -17,6 +17,7 @@
     packages = with pkgs; [
       bottom
       eog
+      google-chrome
       localsend
       papers
       unzip

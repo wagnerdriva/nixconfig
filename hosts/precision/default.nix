@@ -6,6 +6,7 @@
     ./snapshots.nix
     ../../modules/nixos/base.nix
     ../../modules/nixos/desktop.nix
+    ../../modules/nixos/netbird.nix
   ];
 
   networking.hostName = "precision";
@@ -21,4 +22,3 @@
     MOZ_ENABLE_WAYLAND = "1";
   };
 }
-
