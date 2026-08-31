@@ -1,7 +1,7 @@
 { pkgs, ... }:
 let
   colors = import ./colors.nix;
-  wallpaper = ../../assets/wallpapers/black-hole.png;
+  wallpaper = "${../../assets/wallpapers/black-hole.png}";
 in {
   programs.niri.settings = {
     input = {
