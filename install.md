@@ -12,6 +12,10 @@
    `AHCI`. Como o disco será apagado, não precisamos preservar o boot atual.
 4. Inicie o ISO gráfico do NixOS 26.05 e conecte-o à internet.
 
+Não abra nem monte as partições do NVMe pelo gerenciador de arquivos. O
+instalador aborta se detectar qualquer partição do disco em uso, inclusive se
+for executado por engano a partir do NixOS instalado.
+
 No terminal do live USB, confirme os endereços das GPUs:
 
 ```bash

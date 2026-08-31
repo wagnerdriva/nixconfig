@@ -28,6 +28,10 @@ MODEL=$(lsblk -dn -o MODEL "$REAL_DISK")
 [[ "$MODEL" == *"PC401"* ]] || \
   die "modelo inesperado: $MODEL (esperado: SK hynix PC401)"
 
+MOUNTED_TARGET=$(lsblk -nr -o MOUNTPOINTS "$REAL_DISK" | sed '/^[[:space:]]*$/d')
+[[ -z "$MOUNTED_TARGET" ]] || \
+  die "há partições de $REAL_DISK montadas; inicie pelo live USB e não abra o NVMe no gerenciador de arquivos"
+
 GPU_LIST=$(lspci -D | grep -E 'VGA|3D' || true)
 grep -Eq '^0000:00:02\.0 .*Intel' <<< "$GPU_LIST" || \
   die "GPU Intel não encontrada no endereço esperado 0000:00:02.0"
