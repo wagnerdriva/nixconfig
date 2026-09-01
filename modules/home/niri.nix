@@ -4,6 +4,21 @@ let
   wallpaper = "${../../assets/wallpapers/black-hole.png}";
 in {
   programs.niri.settings = {
+    outputs = {
+      "DP-3" = {
+        scale = 1;
+        position = { x = 0; y = 0; };
+      };
+      "DP-1" = {
+        scale = 1;
+        position = { x = 1920; y = 0; };
+      };
+      "eDP-1" = {
+        scale = 2.25;
+        position = { x = 1067; y = 1080; };
+      };
+    };
+
     input = {
       power-key-handling.enable = false;
       focus-follows-mouse.enable = false;
@@ -182,6 +197,15 @@ in {
       "Mod+Ctrl+K".action.move-window-up = [];
       "Mod+Ctrl+L".action.move-column-right = [];
 
+      "Mod+Shift+Left".action.focus-monitor-left = [];
+      "Mod+Shift+Down".action.focus-monitor-down = [];
+      "Mod+Shift+Up".action.focus-monitor-up = [];
+      "Mod+Shift+Right".action.focus-monitor-right = [];
+      "Mod+Shift+Ctrl+Left".action.move-column-to-monitor-left = [];
+      "Mod+Shift+Ctrl+Down".action.move-column-to-monitor-down = [];
+      "Mod+Shift+Ctrl+Up".action.move-column-to-monitor-up = [];
+      "Mod+Shift+Ctrl+Right".action.move-column-to-monitor-right = [];
+
       "Mod+Page_Down".action.focus-workspace-down = [];
       "Mod+Page_Up".action.focus-workspace-up = [];
       "Mod+Shift+Page_Down".action.move-column-to-workspace-down = [];
@@ -214,6 +238,10 @@ in {
       "Mod+F".action.maximize-column = [];
       "Mod+Shift+F".action.fullscreen-window = [];
       "Mod+C".action.center-column = [];
+      "Mod+Minus".action.set-column-width = "-10%";
+      "Mod+Equal".action.set-column-width = "+10%";
+      "Mod+Shift+Minus".action.set-window-height = "-10%";
+      "Mod+Shift+Equal".action.set-window-height = "+10%";
 
       "Print".action.screenshot = [];
       "Ctrl+Print".action.screenshot-screen = [];
