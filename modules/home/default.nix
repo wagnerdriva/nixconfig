@@ -9,6 +9,7 @@
     ./kanshi.nix
     ./mpv.nix
     ./niri.nix
+    ./screen-recording.nix
     ./swaync.nix
     ./terminal.nix
     ./udiskie.nix
