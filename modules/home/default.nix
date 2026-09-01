@@ -25,7 +25,7 @@
 
     sessionVariables = {
       EDITOR = "hx";
-      BROWSER = "firefox";
+      BROWSER = "google-chrome-stable";
       XDG_CURRENT_DESKTOP = "niri";
       XDG_SESSION_TYPE = "wayland";
       XDG_SESSION_DESKTOP = "niri";
@@ -41,7 +41,6 @@
   };
 
   programs.home-manager.enable = true;
-  programs.firefox.enable = true;
 
   programs.fish = {
     enable = true;

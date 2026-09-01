@@ -68,7 +68,6 @@ in {
       }
       {
         matches = [
-          { app-id = "^firefox$"; }
           { app-id = "^google-chrome.*$"; }
           { app-id = "^chromium.*$"; }
         ];

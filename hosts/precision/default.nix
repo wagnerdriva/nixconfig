@@ -6,6 +6,7 @@
     ./snapshots.nix
     ../../modules/nixos/base.nix
     ../../modules/nixos/desktop.nix
+    ../../modules/nixos/docker.nix
     ../../modules/nixos/netbird.nix
   ];
 
@@ -19,6 +20,5 @@
   environment.sessionVariables = {
     LIBVA_DRIVER_NAME = "iHD";
     NIXOS_OZONE_WL = "1";
-    MOZ_ENABLE_WAYLAND = "1";
   };
 }
