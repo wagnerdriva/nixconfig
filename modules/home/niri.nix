@@ -31,7 +31,6 @@ in {
       keyboard.xkb = {
         layout = "us";
         variant = "intl";
-        options = "altwin:swap_lalt_lwin";
       };
     };
 

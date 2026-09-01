@@ -70,9 +70,8 @@ nvidia-offload programa
 
 ## Primeiros atalhos do Niri
 
-O layout troca as teclas `Alt` e `Super` da esquerda para deixar a tecla ao
-lado da barra de espaço funcionando como `Mod`, mais próxima da posição de
-`Command` no Mac.
+O `Mod` do Niri é a tecla `Super` (Windows). As teclas `Alt` permanecem em suas
+funções normais.
 
 - `Mod+Enter`: terminal;
 - `Mod+R`: buscar aplicativo;
@@ -84,5 +83,4 @@ lado da barra de espaço funcionando como `Mod`, mais próxima da posição de
 - `Alt+L`: bloquear a sessão;
 - `Mod+Shift+/`: mostrar todos os atalhos.
 
-O teclado mantém `Esc` e `Caps Lock` em suas funções normais; apenas `Alt` e
-`Super` esquerdos são trocados para aproximar `Mod` da posição de `Command`.
+O teclado mantém `Esc`, `Caps Lock` e `Alt` em suas funções normais.
