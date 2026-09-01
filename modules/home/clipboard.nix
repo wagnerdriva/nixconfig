@@ -2,11 +2,12 @@
 let
   clipboard-history = pkgs.writeShellApplication {
     name = "clipboard-history";
-    runtimeInputs = with pkgs; [ cliphist fuzzel wl-clipboard ];
+    runtimeInputs = with pkgs; [ cliphist fuzzel wl-clipboard wtype ];
     text = ''
       selection="$(cliphist list | fuzzel --dmenu --prompt='Área de transferência: ')"
       [ -n "$selection" ] || exit 0
       printf '%s' "$selection" | cliphist decode | wl-copy
+      wtype -s 100 -M ctrl -k v -m ctrl
     '';
   };
 in {
