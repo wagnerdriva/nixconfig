@@ -79,10 +79,11 @@ funções normais.
 - `Mod+E`: arquivos;
 - `Mod+Q`: fechar janela;
 - `Mod+V`: abrir o histórico e colar o item selecionado;
-- `Mod+H/J/K/L` ou setas: navegar;
+- `Mod+H/J/K` ou setas: navegar;
 - `Mod+1` até `Mod+9`: trocar de workspace;
 - `Mod+Shift+1` até `Mod+Shift+9`: mover a janela;
-- `Alt+L`: bloquear a sessão;
+- `Mod+L`: bloquear a sessão;
 - `Mod+Shift+/`: mostrar todos os atalhos.
 
 O teclado mantém `Esc`, `Caps Lock` e `Alt` em suas funções normais.
+`´` + `c` produz `ç` (e `´` + `C` produz `Ç`).

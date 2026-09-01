@@ -6,9 +6,13 @@
     ./fuzzel.nix
     ./hypridle.nix
     ./hyprlock.nix
+    ./kanshi.nix
+    ./mpv.nix
     ./niri.nix
     ./swaync.nix
     ./terminal.nix
+    ./udiskie.nix
+    ./xcompose.nix
     ./waybar.nix
     ./zed.nix
   ];

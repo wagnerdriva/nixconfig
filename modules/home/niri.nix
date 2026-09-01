@@ -153,7 +153,7 @@ in {
       "Mod+Return".action.spawn = [ "alacritty" ];
       "Mod+E".action.spawn = [ "nautilus" ];
       "Mod+R".action.spawn = [ "fuzzel" ];
-      "Alt+L".action.spawn = [ "hyprlock" ];
+      "Mod+L".action.spawn = [ "hyprlock" ];
       "Mod+N".action.spawn = [ "swaync-client" "-t" "-sw" ];
 
       "XF86AudioRaiseVolume" = {
@@ -189,7 +189,6 @@ in {
       "Mod+H".action.focus-column-left = [];
       "Mod+J".action.focus-window-down = [];
       "Mod+K".action.focus-window-up = [];
-      "Mod+L".action.focus-column-right = [];
 
       "Mod+Ctrl+Left".action.move-column-left = [];
       "Mod+Ctrl+Down".action.move-window-down = [];
