@@ -1,5 +1,7 @@
 { pkgs, primaryUser, ... }: {
   imports = [
+    ./celluloid.nix
+    ./clipboard.nix
     ./development.nix
     ./fuzzel.nix
     ./hypridle.nix

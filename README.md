@@ -78,6 +78,7 @@ funções normais.
 - `Mod+R`: buscar aplicativo;
 - `Mod+E`: arquivos;
 - `Mod+Q`: fechar janela;
+- `Mod+V`: abrir o histórico da área de transferência;
 - `Mod+H/J/K/L` ou setas: navegar;
 - `Mod+1` até `Mod+9`: trocar de workspace;
 - `Mod+Shift+1` até `Mod+Shift+9`: mover a janela;
