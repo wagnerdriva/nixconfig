@@ -88,6 +88,7 @@ in
 
   programs.fish = {
     shellAliases = {
+      zed = "zeditor";
       claude-max = "env ANTHROPIC_MODEL=claude/opus claude";
       claude-codex = "env ANTHROPIC_MODEL=codex/opus claude";
       claude-glm = "env ANTHROPIC_MODEL=glm/opus claude";

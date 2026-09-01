@@ -8,6 +8,7 @@
     ./swaync.nix
     ./terminal.nix
     ./waybar.nix
+    ./zed.nix
   ];
 
   home = {
@@ -21,6 +22,7 @@
       localsend
       papers
       unzip
+      zed-editor
     ];
 
     sessionVariables = {

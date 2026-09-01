@@ -26,10 +26,11 @@ wallpaper local em `assets/wallpapers/black-hole.png`.
 
 ## Ferramentas de desenvolvimento
 
-O Home Manager instala Orca (`orca-ide`), Codex, Claude Code, `btop`, Node.js,
-pnpm e utilitários básicos de desenvolvimento. `codex` já abre usando o proxy
-da Driva; `codex-openai` preserva o cliente sem esse override. Para Claude Code,
-há também os aliases `claude-max`, `claude-codex` e `claude-glm`.
+O Home Manager instala Zed (`zed`), Orca (`orca-ide`), Codex, Claude Code,
+`btop`, Node.js, pnpm e utilitários básicos de desenvolvimento. `codex` já abre
+usando o proxy da Driva; `codex-openai` preserva o cliente sem esse override.
+Para Claude Code, há também os aliases `claude-max`, `claude-codex` e
+`claude-glm`.
 
 A credencial compartilhada pelos dois clientes fica somente na máquina, em
 `~/.config/driva/proxy-key`, com permissão `0600`. Esse arquivo não pertence ao

@@ -8,6 +8,7 @@
     ../../modules/nixos/desktop.nix
     ../../modules/nixos/docker.nix
     ../../modules/nixos/netbird.nix
+    ../../modules/nixos/nix-ld.nix
   ];
 
   networking.hostName = "precision";

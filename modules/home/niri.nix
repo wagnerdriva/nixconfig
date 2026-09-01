@@ -88,6 +88,10 @@ in {
         default-column-width = { proportion = 0.7; };
       }
       {
+        matches = [{ app-id = "^zed.*$"; }];
+        default-column-width = { proportion = 0.75; };
+      }
+      {
         matches = [
           { app-id = "^Alacritty$"; }
           { app-id = "^org.gnome.Nautilus$"; }
