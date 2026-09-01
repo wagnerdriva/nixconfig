@@ -17,7 +17,9 @@
     stateVersion = "26.05";
 
     packages = with pkgs; [
+      celluloid
       eog
+      gnupg
       google-chrome
       localsend
       papers
