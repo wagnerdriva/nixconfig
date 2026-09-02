@@ -99,7 +99,9 @@ in {
       }
 
       window#waybar {
-        background: transparent;
+        background: rgba(17, 18, 21, 0.78);
+        border: 1px solid rgba(215, 215, 255, 0.10);
+        border-radius: 10px;
         color: ${colors.text};
       }
 
@@ -136,4 +138,3 @@ in {
     '';
   };
 }
-
