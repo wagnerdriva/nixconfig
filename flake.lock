@@ -131,12 +131,33 @@
         "type": "github"
       }
     },
+    "query-on": {
+      "inputs": {
+        "nixpkgs": [
+          "nixpkgs"
+        ]
+      },
+      "locked": {
+        "lastModified": 1788310414,
+        "narHash": "sha256-tWrRnHt7dlYib/kkMvCRiZuksDAUQQI6fpdBIFUwXuk=",
+        "ref": "refs/heads/main",
+        "rev": "502e04bb4e43ddf77e5c37cdf463b03805ad6bf8",
+        "revCount": 12,
+        "type": "git",
+        "url": "https://github.com/ramosrafh/query-on.git"
+      },
+      "original": {
+        "type": "git",
+        "url": "https://github.com/ramosrafh/query-on.git"
+      }
+    },
     "root": {
       "inputs": {
         "disko": "disko",
         "home-manager": "home-manager",
         "niri-flake": "niri-flake",
-        "nixpkgs": "nixpkgs"
+        "nixpkgs": "nixpkgs",
+        "query-on": "query-on"
       }
     },
     "xwayland-satellite-stable": {

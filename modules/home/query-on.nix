@@ -1,0 +1,3 @@
+{ queryOnPackage, ... }: {
+  home.packages = [ queryOnPackage ];
+}

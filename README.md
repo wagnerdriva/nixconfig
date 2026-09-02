@@ -26,9 +26,10 @@ wallpaper local em `assets/wallpapers/black-hole.png`.
 
 ## Ferramentas de desenvolvimento
 
-O Home Manager instala Zed (`zed`), Orca (`orca-ide`), Codex, Claude Code,
-`btop`, Node.js, pnpm e utilitários básicos de desenvolvimento. `codex` já abre
-usando o proxy da Driva; `codex-openai` preserva o cliente sem esse override.
+O Home Manager instala Zed (`zed`), Orca (`orca-ide`), Query On (`query-on`),
+Codex, Claude Code, `btop`, Node.js, pnpm e utilitários básicos de
+desenvolvimento. `codex` já abre usando o proxy da Driva; `codex-openai`
+preserva o cliente sem esse override.
 Para Claude Code, há também os aliases `claude-max`, `claude-codex` e
 `claude-glm`.
 

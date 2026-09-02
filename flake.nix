@@ -18,9 +18,14 @@
       url = "github:sodiboo/niri-flake";
       inputs.nixpkgs.follows = "nixpkgs";
     };
+
+    query-on = {
+      url = "git+https://github.com/ramosrafh/query-on.git";
+      inputs.nixpkgs.follows = "nixpkgs";
+    };
   };
 
-  outputs = { nixpkgs, home-manager, disko, niri-flake, ... }:
+  outputs = { nixpkgs, home-manager, disko, niri-flake, query-on, ... }:
     let
       system = "x86_64-linux";
       primaryUser = "wagner";
@@ -43,7 +48,10 @@
               useUserPackages = true;
               backupFileExtension = "hm-backup";
               users.${primaryUser} = import ./modules/home;
-              extraSpecialArgs = { inherit primaryUser; };
+              extraSpecialArgs = {
+                inherit primaryUser;
+                queryOnPackage = query-on.packages.${system}.default;
+              };
             };
           }
         ];

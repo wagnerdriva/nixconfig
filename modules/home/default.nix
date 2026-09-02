@@ -9,6 +9,7 @@
     ./kanshi.nix
     ./mpv.nix
     ./niri.nix
+    ./query-on.nix
     ./screen-recording.nix
     ./swaync.nix
     ./terminal.nix
@@ -22,6 +23,20 @@
     username = primaryUser;
     homeDirectory = "/home/${primaryUser}";
     stateVersion = "26.05";
+
+    # Keep login shells independent from installer-generated environment
+    # files. Some tools place an optional env script under ~/.local/bin; if
+    # that file later disappears, sourcing it from ~/.profile aborts greetd's
+    # Niri session before the compositor can start.
+    sessionPath = [ "$HOME/.local/bin" ];
+
+    file.".profile" = {
+      force = true;
+      text = ''
+        # Managed by Home Manager. User executables under ~/.local/bin are
+        # added to PATH through home.sessionPath.
+      '';
+    };
 
     packages = with pkgs; [
       celluloid
