@@ -3,6 +3,29 @@ let
   drivaProxyUrl = "http://vpn-driva.netbird.driva.io:8317";
   proxyKeyFile = "$HOME/.config/driva/proxy-key";
 
+  codex-package = pkgs.stdenvNoCC.mkDerivation {
+    pname = "codex";
+    version = "0.153.0";
+    src = pkgs.fetchurl {
+      url = "https://github.com/openai/codex/releases/download/rust-v0.153.0/codex-x86_64-unknown-linux-musl.tar.gz";
+      hash = "sha256-NagsFT2DlZ3gnCy4SscLpp0FeIrusI1Klcpo45+GaA4=";
+    };
+    sourceRoot = ".";
+    nativeBuildInputs = [ pkgs.makeWrapper ];
+    dontBuild = true;
+    installPhase = ''
+      runHook preInstall
+      install -Dm755 codex-x86_64-unknown-linux-musl $out/bin/codex
+      runHook postInstall
+    '';
+    postFixup = ''
+      wrapProgram $out/bin/codex --prefix PATH : ${lib.makeBinPath [ pkgs.ripgrep pkgs.bubblewrap ]}
+    '';
+    meta = pkgs.codex.meta // {
+      changelog = "https://github.com/openai/codex/releases/tag/rust-v0.153.0";
+    };
+  };
+
   orca-app = pkgs.callPackage ../../packages/orca-ide.nix { };
 
   # Orca ships a Node-based CLI inside the desktop bundle. Run that entrypoint
@@ -28,7 +51,7 @@ let
   '';
 
   codex-driva = pkgs.writeShellScriptBin "codex" ''
-    exec ${pkgs.codex}/bin/codex \
+    exec ${codex-package}/bin/codex \
       -c 'model="gpt-5.6-sol"' \
       -c 'model_provider="driva_proxy"' \
       -c 'model_reasoning_effort="xhigh"' \
@@ -42,7 +65,7 @@ let
   '';
 
   codex-openai = pkgs.writeShellScriptBin "codex-openai" ''
-    exec ${pkgs.codex}/bin/codex "$@"
+    exec ${codex-package}/bin/codex "$@"
   '';
 in
 {
@@ -74,7 +97,7 @@ in
     ANTHROPIC_DEFAULT_OPUS_MODEL = "claude/claude-opus-5";
     ANTHROPIC_DEFAULT_SONNET_MODEL = "claude/claude-sonnet-5";
     ANTHROPIC_DEFAULT_HAIKU_MODEL = "claude/claude-haiku-4-5-20251001";
-    ANTHROPIC_DEFAULT_FABLE_MODEL = "claude/claude-fable-5";
+    ANTHROPIC_DEFAULT_FABLE_MODEL = "claude/claude-fable-5-1";
     CLAUDE_CODE_DISABLE_ADAPTIVE_THINKING = "1";
     CLAUDE_CODE_DISABLE_AUTO_MEMORY = "1";
     CLAUDE_CODE_EFFORT_LEVEL = "max";
@@ -88,6 +111,9 @@ in
 
   programs.fish = {
     shellAliases = {
+      # The official updater keeps the current Claude Code binary here. The
+      # Nix package can lag behind new model aliases (including Fable 5.1).
+      claude = "/home/wagner/.local/bin/claude";
       zed = "zeditor";
       claude-max = "env ANTHROPIC_MODEL=claude/opus claude";
       claude-codex = "env ANTHROPIC_MODEL=codex/opus claude";
