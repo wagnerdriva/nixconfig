@@ -20,7 +20,7 @@
             }
             {
               criteria = "eDP-1";
-              position = "1067,1080";
+              position = "0,1080";
               scale = 2.25;
             }
           ];

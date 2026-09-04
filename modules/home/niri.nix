@@ -15,7 +15,7 @@ in {
       };
       "eDP-1" = {
         scale = 2.25;
-        position = { x = 1067; y = 1080; };
+        position = { x = 0; y = 1080; };
       };
     };
 
