@@ -42,7 +42,11 @@
       celluloid
       eog
       gnupg
-      google-chrome
+      (google-chrome.override {
+        # Chrome's Wayland text-input-v3 path ignores the custom XCompose
+        # sequence that maps dead acute + c to c-cedilla.
+        commandLineArgs = "--disable-features=WaylandTextInputV3";
+      })
       localsend
       papers
       unzip
