@@ -3,26 +3,37 @@ let
   drivaProxyUrl = "http://vpn-driva.netbird.driva.io:8317";
   proxyKeyFile = "$HOME/.config/driva/proxy-key";
 
+  codexVersion = "0.153.0";
+
   codex-package = pkgs.stdenvNoCC.mkDerivation {
     pname = "codex";
-    version = "0.153.0";
-    src = pkgs.fetchurl {
-      url = "https://github.com/openai/codex/releases/download/rust-v0.153.0/codex-x86_64-unknown-linux-musl.tar.gz";
-      hash = "sha256-NagsFT2DlZ3gnCy4SscLpp0FeIrusI1Klcpo45+GaA4=";
-    };
+    version = codexVersion;
+    # `codex-code-mode-host` ships as a separate release asset; code mode fails
+    # closed unless it sits next to the `codex` binary.
+    srcs = [
+      (pkgs.fetchurl {
+        url = "https://github.com/openai/codex/releases/download/rust-v${codexVersion}/codex-x86_64-unknown-linux-musl.tar.gz";
+        hash = "sha256-NagsFT2DlZ3gnCy4SscLpp0FeIrusI1Klcpo45+GaA4=";
+      })
+      (pkgs.fetchurl {
+        url = "https://github.com/openai/codex/releases/download/rust-v${codexVersion}/codex-code-mode-host-x86_64-unknown-linux-musl.tar.gz";
+        hash = "sha256-K4F6SV41pTMz6Us1r57YeeGA+bKP1X7xWs6ahXuobyw=";
+      })
+    ];
     sourceRoot = ".";
     nativeBuildInputs = [ pkgs.makeWrapper ];
     dontBuild = true;
     installPhase = ''
       runHook preInstall
       install -Dm755 codex-x86_64-unknown-linux-musl $out/bin/codex
+      install -Dm755 codex-code-mode-host-x86_64-unknown-linux-musl $out/bin/codex-code-mode-host
       runHook postInstall
     '';
     postFixup = ''
       wrapProgram $out/bin/codex --prefix PATH : ${lib.makeBinPath [ pkgs.ripgrep pkgs.bubblewrap ]}
     '';
     meta = pkgs.codex.meta // {
-      changelog = "https://github.com/openai/codex/releases/tag/rust-v0.153.0";
+      changelog = "https://github.com/openai/codex/releases/tag/rust-v${codexVersion}";
     };
   };
 
