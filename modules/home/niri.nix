@@ -226,8 +226,6 @@ in {
       "Mod+Shift+1".action.move-column-to-workspace = 1;
       "Mod+Shift+2".action.move-column-to-workspace = 2;
       "Mod+Shift+3".action.move-column-to-workspace = 3;
-      "Mod+Shift+4".action.move-column-to-workspace = 4;
-      "Mod+Shift+5".action.move-column-to-workspace = 5;
       "Mod+Shift+6".action.move-column-to-workspace = 6;
       "Mod+Shift+7".action.move-column-to-workspace = 7;
       "Mod+Shift+8".action.move-column-to-workspace = 8;
@@ -245,9 +243,7 @@ in {
       "Mod+Shift+Minus".action.set-window-height = "-10%";
       "Mod+Shift+Equal".action.set-window-height = "+10%";
 
-      "Print".action.screenshot = [];
-      "Ctrl+Print".action.screenshot-screen = [];
-      "Alt+Print".action.screenshot-window = [];
+      "Mod+Shift+4".action.screenshot = [];
 
       "Mod+Shift+E".action.quit = [];
       "Mod+Shift+P".action.power-off-monitors = [];

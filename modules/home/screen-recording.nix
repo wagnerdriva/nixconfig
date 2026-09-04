@@ -83,7 +83,7 @@ let
       notify-send \
         --app-name="Gravação de tela" \
         "Gravação iniciada" \
-        "Aperte Windows + Shift + R novamente para salvar."
+        "Aperte Windows + Shift + 5 novamente para salvar."
 
       set +e
       wait "$recorder_pid"
@@ -111,7 +111,7 @@ let
 in {
   home.packages = [ screen-record ];
 
-  programs.niri.settings.binds."Mod+Shift+R".action.spawn = [
+  programs.niri.settings.binds."Mod+Shift+5".action.spawn = [
     "${screen-record}/bin/screen-record"
   ];
 }

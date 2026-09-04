@@ -77,7 +77,8 @@ funções normais.
 
 - `Mod+Enter`: terminal;
 - `Mod+R`: buscar aplicativo;
-- `Mod+Shift+R`: selecionar uma área, escolher o áudio e iniciar/parar a
+- `Mod+Shift+4`: capturar uma imagem da tela;
+- `Mod+Shift+5`: selecionar uma área, escolher o áudio e iniciar/parar a
   gravação da tela (salva em `~/Videos/Gravações`);
 - `Mod+E`: arquivos;
 - `Mod+Q`: fechar janela;
