@@ -1,5 +1,6 @@
 { pkgs, primaryUser, ... }: {
   imports = [
+    ./agent-instructions.nix
     ./celluloid.nix
     ./clipboard.nix
     ./development.nix
