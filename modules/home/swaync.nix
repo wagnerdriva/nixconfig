@@ -44,7 +44,7 @@ in {
       }
 
       * {
-        font-family: "Noto Sans", "JetBrainsMono Nerd Font";
+        font-family: "Noto Sans", "Hack Nerd Font";
         font-size: 13px;
       }
 

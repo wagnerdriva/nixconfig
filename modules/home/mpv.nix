@@ -18,12 +18,12 @@ in {
 
       # Subtitles
       sub-auto = "fuzzy";
-      sub-font = "JetBrainsMono Nerd Font";
+      sub-font = "Hack Nerd Font";
       sub-font-size = 36;
       sub-border-size = 2;
 
       # OSD - Broken Pine colors
-      osd-font = "JetBrainsMono Nerd Font";
+      osd-font = "Hack Nerd Font";
       osd-font-size = 24;
       osd-color = brokenPine.text;
       osd-border-color = brokenPine.background;

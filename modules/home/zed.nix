@@ -11,7 +11,7 @@ in {
     text = builtins.toJSON {
       theme = "Broken Pine Theme";
       icon_theme = "Zed (Default)";
-      buffer_font_family = "JetBrainsMono Nerd Font";
+      buffer_font_family = "Hack Nerd Font";
       ui_font_family = "Inter";
       feature_flags = {
         notebooks = "on";

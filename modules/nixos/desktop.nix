@@ -67,12 +67,12 @@
       noto-fonts-cjk-sans
       noto-fonts-color-emoji
       inter
-      nerd-fonts.jetbrains-mono
+      nerd-fonts.hack
       nerd-fonts.symbols-only
       material-design-icons
     ];
     fontconfig.defaultFonts = {
-      monospace = [ "JetBrainsMono Nerd Font" "Symbols Nerd Font Mono" ];
+      monospace = [ "Hack Nerd Font" "Symbols Nerd Font Mono" ];
       sansSerif = [ "Noto Sans" ];
       serif = [ "Noto Serif" ];
     };

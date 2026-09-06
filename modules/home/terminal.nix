@@ -12,7 +12,7 @@ in {
       };
       font = {
         size = 13.0;
-        normal.family = "JetBrainsMono Nerd Font";
+        normal.family = "Hack Nerd Font";
       };
       cursor.style = {
         shape = "Beam";

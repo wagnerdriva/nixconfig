@@ -92,7 +92,7 @@ in {
 
     style = ''
       * {
-        font-family: "JetBrainsMono Nerd Font", "Symbols Nerd Font Mono", monospace;
+        font-family: "Hack Nerd Font", "Symbols Nerd Font Mono", monospace;
         font-weight: bold;
         font-size: 15px;
         border-radius: 0;

@@ -45,7 +45,7 @@ in {
           text = ''cmd[update:1000] echo "$(date +"%A, %d de %B")"'';
           color = "rgba(215, 215, 255, 0.75)";
           font_size = 22;
-          font_family = "JetBrainsMono Nerd Font";
+          font_family = "Hack Nerd Font";
           position = "0, 300";
           halign = "center";
           valign = "center";
@@ -55,7 +55,7 @@ in {
           text = ''cmd[update:1000] echo "$(date +"%H:%M")"'';
           color = "rgba(215, 215, 255, 0.75)";
           font_size = 120;
-          font_family = "JetBrainsMono Nerd Font ExtraBold";
+          font_family = "Hack Nerd Font";
           position = "0, 180";
           halign = "center";
           valign = "center";
