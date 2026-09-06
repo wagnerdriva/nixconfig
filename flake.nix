@@ -4,6 +4,8 @@
   inputs = {
     nixpkgs.url = "github:NixOS/nixpkgs/nixos-26.05";
 
+    ai-memory.url = "github:akitaonrails/ai-memory";
+
     home-manager = {
       url = "github:nix-community/home-manager/release-26.05";
       inputs.nixpkgs.follows = "nixpkgs";
@@ -25,7 +27,7 @@
     };
   };
 
-  outputs = { nixpkgs, home-manager, disko, niri-flake, query-on, ... }:
+  outputs = { nixpkgs, home-manager, disko, niri-flake, query-on, ai-memory, ... }:
     let
       system = "x86_64-linux";
       primaryUser = "wagner";
@@ -50,6 +52,7 @@
               users.${primaryUser} = import ./modules/home;
               extraSpecialArgs = {
                 inherit primaryUser;
+                aiMemoryPackage = ai-memory.packages.${system}.default;
                 queryOnPackage = query-on.packages.${system}.default;
               };
             };

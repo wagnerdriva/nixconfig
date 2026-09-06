@@ -1,4 +1,4 @@
-{ lib, pkgs, ... }:
+{ lib, pkgs, aiMemoryPackage, ... }:
 let
   drivaProxyUrl = "http://vpn-driva.netbird.driva.io:8317";
   proxyKeyFile = "$HOME/.config/driva/proxy-key";
@@ -81,6 +81,7 @@ let
 in
 {
   home.packages = with pkgs; [
+    aiMemoryPackage
     btop
     claude-code
     codex-driva
