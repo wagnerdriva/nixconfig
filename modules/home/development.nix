@@ -3,7 +3,7 @@ let
   drivaProxyUrl = "http://vpn-driva.netbird.driva.io:8317";
   proxyKeyFile = "$HOME/.config/driva/proxy-key";
 
-  codexVersion = "0.153.0";
+  codexVersion = "0.153.4";
 
   codex-package = pkgs.stdenvNoCC.mkDerivation {
     pname = "codex";
@@ -13,11 +13,11 @@ let
     srcs = [
       (pkgs.fetchurl {
         url = "https://github.com/openai/codex/releases/download/rust-v${codexVersion}/codex-x86_64-unknown-linux-musl.tar.gz";
-        hash = "sha256-NagsFT2DlZ3gnCy4SscLpp0FeIrusI1Klcpo45+GaA4=";
+        hash = "sha256-9HlCTsoJJITcQNh64oxE9MxAI0pgBF1hMeSTgA2BSjA=";
       })
       (pkgs.fetchurl {
         url = "https://github.com/openai/codex/releases/download/rust-v${codexVersion}/codex-code-mode-host-x86_64-unknown-linux-musl.tar.gz";
-        hash = "sha256-K4F6SV41pTMz6Us1r57YeeGA+bKP1X7xWs6ahXuobyw=";
+        hash = "sha256-+VgwqGlZCVdmS7/Ge8ywh3OAa2k2cLrxWQgXb4m0zTE=";
       })
     ];
     sourceRoot = ".";
@@ -63,7 +63,7 @@ let
 
   codex-driva = pkgs.writeShellScriptBin "codex" ''
     exec ${codex-package}/bin/codex \
-      -c 'model="gpt-5.6-sol"' \
+      -c 'model="gpt-6-astra"' \
       -c 'model_provider="driva_proxy"' \
       -c 'model_reasoning_effort="xhigh"' \
       -c 'service_tier="fast"' \
