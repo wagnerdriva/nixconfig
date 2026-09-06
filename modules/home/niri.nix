@@ -1,7 +1,6 @@
-{ pkgs, ... }:
+{ ... }:
 let
   colors = import ./colors.nix;
-  wallpaper = "${../../assets/wallpapers/966314.jpg}";
 in {
   programs.niri.settings = {
     outputs = {
@@ -54,7 +53,6 @@ in {
     };
 
     spawn-at-startup = [
-      { command = [ "sh" "-c" "awww-daemon & sleep 1 && awww img ${wallpaper} --transition-type fade" ]; }
       { command = [ "sh" "-c" "sleep 1 && waybar" ]; }
       { command = [ "swaync" "--skip-system-css" ]; }
       { command = [ "nm-applet" "--indicator" ]; }
@@ -249,6 +247,4 @@ in {
       "Mod+Shift+P".action.power-off-monitors = [];
     };
   };
-
-  home.packages = [ pkgs.awww ];
 }

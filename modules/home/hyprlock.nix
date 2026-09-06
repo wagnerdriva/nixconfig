@@ -1,6 +1,6 @@
-{ ... }:
+{ config, ... }:
 let
-  wallpaper = "${../../assets/wallpapers/966314.jpg}";
+  wallpaper = "${config.xdg.stateHome}/wallpaper/current";
 in {
   programs.hyprlock = {
     enable = true;

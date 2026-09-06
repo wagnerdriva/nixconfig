@@ -22,7 +22,8 @@ descreve o sistema compartilhável e `modules/home` descreve a sessão gráfica 
 as preferências do usuário `wagner`.
 
 O visual usa a paleta Broken Pine, Niri, Waybar, Fuzzel, SwayNC, Hyprlock e o
-wallpaper local em `assets/wallpapers/966314.jpg`.
+wallpaper padrão em `assets/wallpapers/1330829.jpeg`. `Mod+W` abre o seletor dos
+seis wallpapers disponíveis e mantém a escolha entre reinícios.
 
 ## Ferramentas de desenvolvimento
 
@@ -77,6 +78,7 @@ funções normais.
 
 - `Mod+Enter`: terminal;
 - `Mod+R`: buscar aplicativo;
+- `Mod+W`: escolher o wallpaper;
 - `Mod+Shift+4`: capturar uma imagem da tela;
 - `Mod+Shift+5`: selecionar uma área, escolher o áudio e iniciar/parar a
   gravação da tela (salva em `~/Videos/Gravações`);

@@ -14,6 +14,7 @@
     ./swaync.nix
     ./terminal.nix
     ./udiskie.nix
+    ./wallpaper.nix
     ./xcompose.nix
     ./waybar.nix
     ./zed.nix
