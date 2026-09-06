@@ -22,7 +22,7 @@ descreve o sistema compartilhável e `modules/home` descreve a sessão gráfica 
 as preferências do usuário `wagner`.
 
 O visual usa a paleta Broken Pine, Niri, Waybar, Fuzzel, SwayNC, Hyprlock e o
-wallpaper local em `assets/wallpapers/black-hole.png`.
+wallpaper local em `assets/wallpapers/966314.jpg`.
 
 ## Ferramentas de desenvolvimento
 

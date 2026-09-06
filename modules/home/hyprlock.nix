@@ -1,6 +1,6 @@
 { ... }:
 let
-  wallpaper = "${../../assets/wallpapers/black-hole.png}";
+  wallpaper = "${../../assets/wallpapers/966314.jpg}";
 in {
   programs.hyprlock = {
     enable = true;
