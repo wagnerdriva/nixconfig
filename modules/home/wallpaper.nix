@@ -27,21 +27,21 @@ let
       fi
 
       selection="$(printf '%s\n' \
-        'Black Hole' \
-        '966314' \
-        '1114362' \
-        '1123555' \
-        '1130462' \
-        '1330829' |
+        'Buraco Negro' \
+        'Ilha Solitária' \
+        'Ruínas Verdes' \
+        'Pátio Noturno' \
+        'Três Árvores' \
+        'Bosque Carmesim' |
         fuzzel --dmenu --lines=6 --prompt='Wallpaper: ')" || exit 0
 
       case "$selection" in
-        'Black Hole') wallpaper="${wallpapers}/black-hole.png" ;;
-        '966314') wallpaper="${wallpapers}/966314.jpg" ;;
-        '1114362') wallpaper="${wallpapers}/1114362.png" ;;
-        '1123555') wallpaper="${wallpapers}/1123555.png" ;;
-        '1130462') wallpaper="${wallpapers}/1130462.png" ;;
-        '1330829') wallpaper="${wallpapers}/1330829.jpeg" ;;
+        'Buraco Negro') wallpaper="${wallpapers}/black-hole.png" ;;
+        'Ilha Solitária') wallpaper="${wallpapers}/966314.jpg" ;;
+        'Ruínas Verdes') wallpaper="${wallpapers}/1114362.png" ;;
+        'Pátio Noturno') wallpaper="${wallpapers}/1123555.png" ;;
+        'Três Árvores') wallpaper="${wallpapers}/1130462.png" ;;
+        'Bosque Carmesim') wallpaper="${wallpapers}/1330829.jpeg" ;;
         *) exit 0 ;;
       esac
 
