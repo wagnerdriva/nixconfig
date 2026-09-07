@@ -52,8 +52,9 @@ in {
       struts = { left = 18; right = 18; };
     };
 
+    # Waybar is started by its Home Manager systemd user service so it comes
+    # back automatically after a crash.
     spawn-at-startup = [
-      { command = [ "sh" "-c" "sleep 1 && waybar" ]; }
       { command = [ "nm-applet" "--indicator" ]; }
     ];
 

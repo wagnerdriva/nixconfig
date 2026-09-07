@@ -4,6 +4,7 @@ let
 in {
   programs.waybar = {
     enable = true;
+    systemd.enable = true;
     settings.mainBar = {
       layer = "top";
       position = "top";
@@ -73,6 +74,8 @@ in {
       };
 
       battery = {
+        bat = "BAT0";
+        adapter = "AC";
         states = {
           warning = 30;
           critical = 15;
@@ -137,4 +140,10 @@ in {
       #battery.critical { color: ${colors.red}; }
     '';
   };
+
+  # Waybar's battery module aborts the whole process when a power supply
+  # device appears or disappears mid-scan, which happens on this laptop every
+  # time the USB-C charger or dock toggles the ucsi-source-psy device.
+  # Restart promptly instead of leaving the session without a bar.
+  systemd.user.services.waybar.Service.RestartSec = 2;
 }
