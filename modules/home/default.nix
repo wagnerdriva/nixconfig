@@ -122,4 +122,17 @@
     createDirectories = true;
   };
 
+  # The ChatGPT desktop entry claims x-scheme-handler/http and
+  # x-scheme-handler/https, so without an explicit default the desktop portal
+  # picks it over Chrome and web links stop opening in the browser. Name the
+  # browser handlers here so the choice does not depend on lookup order.
+  xdg.mimeApps.defaultApplications = {
+    "text/html" = [ "google-chrome.desktop" ];
+    "application/xhtml+xml" = [ "google-chrome.desktop" ];
+    "x-scheme-handler/http" = [ "google-chrome.desktop" ];
+    "x-scheme-handler/https" = [ "google-chrome.desktop" ];
+    "x-scheme-handler/about" = [ "google-chrome.desktop" ];
+    "x-scheme-handler/unknown" = [ "google-chrome.desktop" ];
+  };
+
 }
