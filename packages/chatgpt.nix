@@ -1,4 +1,4 @@
-{ appimageTools, buildFHSEnv, fetchurl, lib, stdenvNoCC, binutils, xz }:
+{ appimageTools, buildFHSEnv, fetchurl, lib, stdenvNoCC, binutils, xz, writeShellScript, codexCli ? null }:
 let
   version = "26.901.51231";
   contents = stdenvNoCC.mkDerivation {
@@ -22,7 +22,11 @@ in
 buildFHSEnv (appimageTools.defaultFhsEnvArgs // {
   pname = "chatgpt";
   inherit version;
-  runScript = "${contents}/lib/chatgpt/ChatGPT";
+  runScript = if codexCli == null then "${contents}/lib/chatgpt/ChatGPT" else
+    writeShellScript "chatgpt-launcher" ''
+      export CODEX_CLI_PATH=${lib.escapeShellArg "${codexCli}/bin/codex"}
+      exec ${contents}/lib/chatgpt/ChatGPT "$@"
+    '';
   extraInstallCommands = ''
     mkdir -p $out/share
     cp -r ${contents}/share/applications ${contents}/share/pixmaps $out/share/

@@ -1,7 +1,10 @@
-{ ... }:
+{ config, lib, ... }:
 let
   colors = import ./colors.nix;
 in {
+  systemd.user.services.swaync.Service.ExecStart = lib.mkForce
+    "${lib.getExe config.services.swaync.package} --skip-system-css";
+
   services.swaync = {
     enable = true;
     settings = {
@@ -102,4 +105,3 @@ in {
     '';
   };
 }
-

@@ -1,4 +1,4 @@
-{ lib, pkgs, aiMemoryPackage, ... }:
+{ config, lib, pkgs, aiMemoryPackage, ... }:
 let
   drivaProxyUrl = "http://vpn-driva.netbird.driva.io:8317";
   proxyKeyFile = "$HOME/.config/driva/proxy-key";
@@ -62,16 +62,19 @@ let
   '';
 
   codex-driva = pkgs.writeShellScriptBin "codex" ''
+    set -eu
+    DRIVA_PROXY_API_KEY="$(${driva-proxy-token}/bin/driva-proxy-token)"
+    export DRIVA_PROXY_API_KEY
+
     exec ${codex-package}/bin/codex \
-      -c 'model="gpt-6-astra"' \
       -c 'model_provider="driva_proxy"' \
-      -c 'model_reasoning_effort="xhigh"' \
+      -c 'model_catalog_json="${./codex-models.json}"' \
       -c 'service_tier="fast"' \
       -c 'check_for_update_on_startup=false' \
       -c 'model_providers.driva_proxy.name="Driva VPN model proxy"' \
       -c 'model_providers.driva_proxy.base_url="${drivaProxyUrl}/v1"' \
       -c 'model_providers.driva_proxy.wire_api="responses"' \
-      -c 'model_providers.driva_proxy.auth.command="${driva-proxy-token}/bin/driva-proxy-token"' \
+      -c 'model_providers.driva_proxy.env_key="DRIVA_PROXY_API_KEY"' \
       "$@"
   '';
 
@@ -80,7 +83,45 @@ let
   '';
 in
 {
+  # Keep the user-local launcher in sync with Home Manager package updates.
+  home.file.".local/bin/codex".source = "${codex-driva}/bin/codex";
+
+  systemd.user.services.ai-memory = {
+    Unit.Description = "Local shared memory for coding agents";
+    Service = {
+      ExecStart = "${aiMemoryPackage}/bin/ai-memory serve --transport http --bind 127.0.0.1:49374 --enable-web";
+      Environment = [
+        "AI_MEMORY_DATA_DIR=${config.xdg.dataHome}/ai-memory"
+        "PATH=${lib.makeBinPath [ pkgs.git pkgs.coreutils ]}"
+      ];
+      Restart = "on-failure";
+      RestartSec = 5;
+      UMask = "0077";
+    };
+    Install.WantedBy = [ "default.target" ];
+  };
+
+  # Refresh native hook commands when the pinned package changes. The upstream
+  # installer merges with existing Codex/Orca hooks and backs up edited files.
+  home.activation.aiMemory = lib.hm.dag.entryAfter [ "writeBoundary" ] ''
+    if [ ! -f "${config.xdg.dataHome}/ai-memory/config.toml" ]; then
+      run ${aiMemoryPackage}/bin/ai-memory --data-dir "${config.xdg.dataHome}/ai-memory" init
+    fi
+    run ${aiMemoryPackage}/bin/ai-memory install-mcp --client codex --apply
+    # The installer preserves read-only Nix store permissions when copying hooks.
+    # Make its local copies writable before a repeated install overwrites them.
+    if [ -d "${config.xdg.dataHome}/ai-memory/hooks" ]; then
+      run ${pkgs.findutils}/bin/find "${config.xdg.dataHome}/ai-memory/hooks" \
+        -type f -user "${config.home.username}" \
+        -exec ${pkgs.coreutils}/bin/chmod u+w {} +
+    fi
+    run ${aiMemoryPackage}/bin/ai-memory install-hooks --agent codex \
+      --hooks-dir ${aiMemoryPackage}/share/ai-memory/hooks \
+      --server-url http://127.0.0.1:49374 --project-strategy repo-root --apply
+  '';
+
   home.packages = with pkgs; [
+    (callPackage ../../packages/chatgpt.nix { codexCli = codex-driva; })
     aiMemoryPackage
     btop
     claude-code

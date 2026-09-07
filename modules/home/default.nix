@@ -41,7 +41,6 @@
     };
 
     packages = with pkgs; [
-      (callPackage ../../packages/chatgpt.nix { })
       celluloid
       eog
       gnupg

@@ -54,7 +54,6 @@ in {
 
     spawn-at-startup = [
       { command = [ "sh" "-c" "sleep 1 && waybar" ]; }
-      { command = [ "swaync" "--skip-system-css" ]; }
       { command = [ "nm-applet" "--indicator" ]; }
     ];
 

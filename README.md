@@ -31,6 +31,9 @@ O Home Manager instala Zed (`zed`), Orca (`orca-ide`), Query On (`query-on`),
 Codex, Claude Code, `btop`, Node.js, pnpm e utilitários básicos de
 desenvolvimento. `codex` já abre usando o proxy da Driva; `codex-openai`
 preserva o cliente sem esse override.
+O wrapper respeita o modelo e o nível de raciocínio salvos no Codex. A chave é
+lida antes de iniciar o cliente e fornecida por `env_key`, evitando executar
+um comando de autenticação durante a atualização do catálogo de modelos.
 Para Claude Code, há também os aliases `claude-max`, `claude-codex` e
 `claude-glm`.
 
