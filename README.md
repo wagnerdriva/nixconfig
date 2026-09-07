@@ -31,6 +31,12 @@ O Home Manager instala Zed (`zed`), Orca (`orca-ide`), Query On (`query-on`),
 Codex, Claude Code, `btop`, Node.js, pnpm e utilitários básicos de
 desenvolvimento. `codex` já abre usando o proxy da Driva; `codex-openai`
 preserva o cliente sem esse override.
+O Home Manager também persiste `model_provider = "driva_proxy"` no arquivo de
+configuração do Codex, preservando as demais preferências. O app recarrega esse
+arquivo ao criar conversas; apenas definir o provedor no wrapper não basta.
+`codex-openai` seleciona explicitamente o provedor oficial.
+Conversas existentes preservam o provedor de criação. Ao mudar o provedor,
+inicie uma conversa nova ou crie uma cópia do histórico com o provedor desejado.
 O wrapper respeita o modelo e o nível de raciocínio salvos no Codex. A chave é
 lida antes de iniciar o cliente e fornecida por `env_key`, evitando executar
 um comando de autenticação durante a atualização do catálogo de modelos.

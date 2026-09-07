@@ -79,12 +79,55 @@ let
   '';
 
   codex-openai = pkgs.writeShellScriptBin "codex-openai" ''
-    exec ${codex-package}/bin/codex "$@"
+    exec ${codex-package}/bin/codex -c 'model_provider="openai"' "$@"
   '';
+
+  codexProxySettings = pkgs.writeText "codex-proxy-settings.json" (builtins.toJSON {
+    model_provider = "driva_proxy";
+    model_providers.driva_proxy = {
+      name = "Driva VPN model proxy";
+      base_url = "${drivaProxyUrl}/v1";
+      wire_api = "responses";
+      env_key = "DRIVA_PROXY_API_KEY";
+    };
+  });
 in
 {
   # Keep the user-local launcher in sync with Home Manager package updates.
   home.file.".local/bin/codex".source = "${codex-driva}/bin/codex";
+  home.file.".local/bin/codex-openai".source = "${codex-openai}/bin/codex-openai";
+
+  # Desktop conversations reload the user config, so CLI overrides alone do not
+  # reliably select the provider. Preserve the app's other mutable settings.
+  home.activation.codexProxy = lib.hm.dag.entryAfter [ "writeBoundary" ] ''
+    run ${pkgs.python3.withPackages (ps: [ ps.tomlkit ])}/bin/python \
+      - "${config.home.homeDirectory}/.codex/config.toml" ${codexProxySettings} <<'PY'
+    import json, os, pathlib, shutil, sys, tempfile
+    import tomlkit
+
+    path = pathlib.Path(sys.argv[1])
+    desired = json.loads(pathlib.Path(sys.argv[2]).read_text())
+    original = path.read_text() if path.exists() else ""
+    document = tomlkit.parse(original)
+    document["model_provider"] = desired["model_provider"]
+    providers = document.setdefault("model_providers", tomlkit.table())
+    providers["driva_proxy"] = desired["model_providers"]["driva_proxy"]
+    updated = tomlkit.dumps(document)
+    if updated != original:
+        path.parent.mkdir(parents=True, exist_ok=True)
+        backup = path.with_name("config.toml.before-managed-proxy")
+        if path.exists() and not backup.exists():
+            shutil.copy2(path, backup)
+        fd, temporary = tempfile.mkstemp(dir=path.parent, prefix=".config-proxy-")
+        try:
+            with os.fdopen(fd, "w") as output:
+                output.write(updated)
+            os.replace(temporary, path)
+        finally:
+            if os.path.exists(temporary):
+                os.unlink(temporary)
+    PY
+  '';
 
   systemd.user.services.ai-memory = {
     Unit.Description = "Local shared memory for coding agents";
