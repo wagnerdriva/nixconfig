@@ -3,7 +3,7 @@ let
   drivaProxyUrl = "http://vpn-driva.netbird.driva.io:8317";
   proxyKeyFile = "$HOME/.config/driva/proxy-key";
 
-  codexVersion = "0.153.4";
+  codexVersion = "0.154.0";
 
   codex-package = pkgs.stdenvNoCC.mkDerivation {
     pname = "codex";
@@ -13,11 +13,11 @@ let
     srcs = [
       (pkgs.fetchurl {
         url = "https://github.com/openai/codex/releases/download/rust-v${codexVersion}/codex-x86_64-unknown-linux-musl.tar.gz";
-        hash = "sha256-9HlCTsoJJITcQNh64oxE9MxAI0pgBF1hMeSTgA2BSjA=";
+        hash = "sha256-1+GLJZeujyQvXzHunpDe70jbye3WNNmGj7ZDXQjAfwI=";
       })
       (pkgs.fetchurl {
         url = "https://github.com/openai/codex/releases/download/rust-v${codexVersion}/codex-code-mode-host-x86_64-unknown-linux-musl.tar.gz";
-        hash = "sha256-+VgwqGlZCVdmS7/Ge8ywh3OAa2k2cLrxWQgXb4m0zTE=";
+        hash = "sha256-po33zKI8bafN4XVnfffeYcc6I0rdEzOhJUuG1kGvAfc=";
       })
     ];
     sourceRoot = ".";
