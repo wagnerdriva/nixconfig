@@ -51,6 +51,7 @@
       })
       localsend
       papers
+      spotify
       unzip
       zed-editor
     ];
