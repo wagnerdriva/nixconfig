@@ -21,13 +21,9 @@
       inputs.nixpkgs.follows = "nixpkgs";
     };
 
-    query-on = {
-      url = "git+https://github.com/ramosrafh/query-on.git";
-      inputs.nixpkgs.follows = "nixpkgs";
-    };
   };
 
-  outputs = { nixpkgs, home-manager, disko, niri-flake, query-on, ai-memory, ... }:
+  outputs = { nixpkgs, home-manager, disko, niri-flake, ai-memory, ... }:
     let
       system = "x86_64-linux";
       primaryUser = "wagner";
@@ -54,7 +50,7 @@
                 extraSpecialArgs = {
                   inherit primaryUser;
                   aiMemoryPackage = ai-memory.packages.${system}.default;
-                  queryOnPackage = query-on.packages.${system}.default;
+                  queryOnPackage = null;
                 };
               };
             }

@@ -27,9 +27,11 @@ seis wallpapers disponíveis e mantém a escolha entre reinícios.
 
 ## Ferramentas de desenvolvimento
 
-O Home Manager instala Zed (`zed`), Orca (`orca-ide`), Query On (`query-on`),
-Codex, Claude Code, `btop`, Node.js, pnpm e utilitários básicos de
-desenvolvimento. `codex` já abre usando o proxy da Driva; `codex-openai`
+O Home Manager instala Zed (`zed`) e Orca (`orca-ide`). Query On (`query-on`)
+é opcional e não é instalado por padrão, pois seu repositório de origem pode
+exigir autenticação. Também são instalados Codex, Claude Code, `btop`, Node.js,
+pnpm e utilitários básicos de desenvolvimento. `codex` já abre usando o proxy
+da Driva; `codex-openai`
 preserva o cliente sem esse override.
 O Home Manager também persiste `model_provider = "driva_proxy"` no arquivo de
 configuração do Codex, preservando as demais preferências. O app recarrega esse
