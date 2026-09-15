@@ -4,6 +4,10 @@ set -euo pipefail
 
 export NIX_CONFIG="${NIX_CONFIG:-}
 experimental-features = nix-command flakes"
+# All flake inputs used by this installer are public. Do not let stale
+# credentials from the live session turn a public fetch into an auth prompt.
+export GIT_CONFIG_GLOBAL=/dev/null
+export GIT_TERMINAL_PROMPT=0
 
 die() {
   echo "Erro: $*" >&2
