@@ -10,7 +10,9 @@
     "usbhid"
     "sd_mod"
   ];
-  boot.kernelModules = [ "kvm-amd" ];
+  # The BCM4360 PCIe Wi-Fi card needs Broadcom's proprietary wl module.
+  boot.extraModulePackages = [ config.boot.kernelPackages.broadcom_sta ];
+  boot.kernelModules = [ "kvm-amd" "wl" ];
 
   nixpkgs.hostPlatform = lib.mkDefault "x86_64-linux";
   hardware.cpu.amd.updateMicrocode =
