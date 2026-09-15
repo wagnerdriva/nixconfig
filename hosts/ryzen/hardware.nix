@@ -11,6 +11,9 @@
     "sd_mod"
   ];
   # The BCM4360 PCIe Wi-Fi card needs Broadcom's proprietary wl module.
+  nixpkgs.config.permittedInsecurePackages = [
+    "broadcom-sta-6.30.223.271-59-6.18.48"
+  ];
   boot.extraModulePackages = [ config.boot.kernelPackages.broadcom_sta ];
   boot.kernelModules = [ "kvm-amd" "wl" ];
 
