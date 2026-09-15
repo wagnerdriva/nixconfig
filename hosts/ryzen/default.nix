@@ -11,15 +11,12 @@
     ../../modules/nixos/nix-ld.nix
   ];
 
-  networking.hostName = "precision";
+  networking.hostName = "ryzen";
   system.stateVersion = "26.05";
 
   boot.loader.timeout = 3;
 
-  # The Precision 5530 is an Intel laptop; keep the integrated GPU as the
-  # default and invoke the Quadro explicitly through nvidia-offload.
   environment.sessionVariables = {
-    LIBVA_DRIVER_NAME = "iHD";
     NIXOS_OZONE_WL = "1";
   };
 }

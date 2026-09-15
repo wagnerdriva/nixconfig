@@ -31,33 +31,39 @@
     let
       system = "x86_64-linux";
       primaryUser = "wagner";
-    in {
-      nixosConfigurations.precision = nixpkgs.lib.nixosSystem {
-        inherit system;
-        specialArgs = { inherit primaryUser; };
 
-        modules = [
-          ./hosts/precision
-          disko.nixosModules.disko
-          niri-flake.nixosModules.niri
-          home-manager.nixosModules.home-manager
+      mkConfiguration = host:
+        nixpkgs.lib.nixosSystem {
+          inherit system;
+          specialArgs = { inherit primaryUser; };
 
-          {
-            nixpkgs.overlays = [ niri-flake.overlays.niri ];
+          modules = [
+            host
+            disko.nixosModules.disko
+            niri-flake.nixosModules.niri
+            home-manager.nixosModules.home-manager
 
-            home-manager = {
-              useGlobalPkgs = true;
-              useUserPackages = true;
-              backupFileExtension = "hm-backup";
-              users.${primaryUser} = import ./modules/home;
-              extraSpecialArgs = {
-                inherit primaryUser;
-                aiMemoryPackage = ai-memory.packages.${system}.default;
-                queryOnPackage = query-on.packages.${system}.default;
+            {
+              nixpkgs.overlays = [ niri-flake.overlays.niri ];
+
+              home-manager = {
+                useGlobalPkgs = true;
+                useUserPackages = true;
+                backupFileExtension = "hm-backup";
+                users.${primaryUser} = import ./modules/home;
+                extraSpecialArgs = {
+                  inherit primaryUser;
+                  aiMemoryPackage = ai-memory.packages.${system}.default;
+                  queryOnPackage = query-on.packages.${system}.default;
+                };
               };
-            };
-          }
-        ];
+            }
+          ];
+        };
+    in {
+      nixosConfigurations = {
+        precision = mkConfiguration ./hosts/precision;
+        ryzen = mkConfiguration ./hosts/ryzen;
       };
 
       packages.${system}.disko = disko.packages.${system}.disko;
