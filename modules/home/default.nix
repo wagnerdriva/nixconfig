@@ -1,6 +1,7 @@
-{ pkgs, primaryUser, ... }: {
-  imports = [
+{ lib, pkgs, primaryUser, minimalAgentSetup, ... }: {
+  imports = lib.optionals (!minimalAgentSetup) [
     ./agent-instructions.nix
+  ] ++ [
     ./celluloid.nix
     ./clipboard.nix
     ./development.nix

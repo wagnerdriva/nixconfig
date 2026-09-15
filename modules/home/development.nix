@@ -1,4 +1,4 @@
-{ config, lib, pkgs, aiMemoryPackage, ... }:
+{ config, lib, pkgs, aiMemoryPackage ? null, minimalAgentSetup, ... }:
 let
   drivaProxyUrl = "http://vpn-driva.netbird.driva.io:8317";
   proxyKeyFile = "$HOME/.config/driva/proxy-key";
@@ -99,7 +99,8 @@ in
 
   # Desktop conversations reload the user config, so CLI overrides alone do not
   # reliably select the provider. Preserve the app's other mutable settings.
-  home.activation.codexProxy = lib.hm.dag.entryAfter [ "writeBoundary" ] ''
+  home.activation.codexProxy = lib.mkIf (!minimalAgentSetup)
+    (lib.hm.dag.entryAfter [ "writeBoundary" ] ''
     run ${pkgs.python3.withPackages (ps: [ ps.tomlkit ])}/bin/python \
       - "${config.home.homeDirectory}/.codex/config.toml" ${codexProxySettings} <<'PY'
     import json, os, pathlib, shutil, sys, tempfile
@@ -127,9 +128,9 @@ in
             if os.path.exists(temporary):
                 os.unlink(temporary)
     PY
-  '';
+  '');
 
-  systemd.user.services.ai-memory = {
+  systemd.user.services.ai-memory = lib.mkIf (!minimalAgentSetup) {
     Unit.Description = "Local shared memory for coding agents";
     Service = {
       ExecStart = "${aiMemoryPackage}/bin/ai-memory serve --transport http --bind 127.0.0.1:49374 --enable-web";
@@ -146,7 +147,8 @@ in
 
   # Refresh native hook commands when the pinned package changes. The upstream
   # installer merges with existing Codex/Orca hooks and backs up edited files.
-  home.activation.aiMemory = lib.hm.dag.entryAfter [ "writeBoundary" ] ''
+  home.activation.aiMemory = lib.mkIf (!minimalAgentSetup)
+    (lib.hm.dag.entryAfter [ "writeBoundary" ] ''
     if [ ! -f "${config.xdg.dataHome}/ai-memory/config.toml" ]; then
       run ${aiMemoryPackage}/bin/ai-memory --data-dir "${config.xdg.dataHome}/ai-memory" init
     fi
@@ -161,16 +163,17 @@ in
     run ${aiMemoryPackage}/bin/ai-memory install-hooks --agent codex \
       --hooks-dir ${aiMemoryPackage}/share/ai-memory/hooks \
       --server-url http://127.0.0.1:49374 --project-strategy repo-root --apply
-  '';
+  '');
 
   home.packages = with pkgs; [
-    (callPackage ../../packages/chatgpt.nix { codexCli = codex-driva; })
-    aiMemoryPackage
-    btop
     claude-code
     codex-driva
     codex-openai
     driva-proxy-token
+  ] ++ lib.optionals (!minimalAgentSetup) [
+    (callPackage ../../packages/chatgpt.nix { codexCli = codex-driva; })
+    aiMemoryPackage
+    btop
     orca-app
     orca-ide
 
@@ -190,6 +193,7 @@ in
 
   home.sessionVariables = {
     ANTHROPIC_BASE_URL = drivaProxyUrl;
+  } // lib.optionalAttrs (!minimalAgentSetup) {
     ANTHROPIC_DEFAULT_OPUS_MODEL = "claude/claude-opus-5";
     ANTHROPIC_DEFAULT_SONNET_MODEL = "claude/claude-sonnet-5";
     ANTHROPIC_DEFAULT_HAIKU_MODEL = "claude/claude-haiku-4-5-20251001";
@@ -200,13 +204,13 @@ in
     ORCA_CLI_COMMAND = "orca-ide";
   };
 
-  programs.direnv = {
+  programs.direnv = lib.mkIf (!minimalAgentSetup) {
     enable = true;
     nix-direnv.enable = true;
   };
 
   programs.fish = {
-    shellAliases = {
+    shellAliases = lib.optionalAttrs (!minimalAgentSetup) {
       # The official updater keeps the current Claude Code binary here. The
       # Nix package can lag behind new model aliases (including Fable 5.1).
       claude = "/home/wagner/.local/bin/claude";
