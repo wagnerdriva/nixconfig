@@ -32,10 +32,10 @@
       system = "x86_64-linux";
       primaryUser = "wagner";
 
-      mkConfiguration = { host, minimalAgentSetup ? false }:
+      mkConfiguration = { host, hostName, minimalAgentSetup ? false }:
         nixpkgs.lib.nixosSystem {
           inherit system;
-          specialArgs = { inherit primaryUser minimalAgentSetup; };
+          specialArgs = { inherit primaryUser hostName minimalAgentSetup; };
 
           modules = [
             host
@@ -52,7 +52,7 @@
                 backupFileExtension = "hm-backup";
                 users.${primaryUser} = import ./modules/home;
                 extraSpecialArgs = {
-                  inherit primaryUser;
+                  inherit primaryUser hostName;
                   aiMemoryPackage = if minimalAgentSetup then null else
                     ai-memory.packages.${system}.default;
                   queryOnPackage = null;
@@ -65,9 +65,13 @@
         };
     in {
       nixosConfigurations = {
-        precision = mkConfiguration { host = ./hosts/precision; };
+        precision = mkConfiguration {
+          host = ./hosts/precision;
+          hostName = "precision";
+        };
         ryzen = mkConfiguration {
           host = ./hosts/ryzen;
+          hostName = "ryzen";
           minimalAgentSetup = true;
         };
       };

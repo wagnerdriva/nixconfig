@@ -1,9 +1,12 @@
-{ ... }:
+{ hostName, lib, ... }:
 let
   colors = import ./colors.nix;
 in {
   programs.niri.settings = {
-    outputs = {
+    # These connector names and positions belong to the Precision dock setup.
+    # The Ryzen desktop auto-detects its connected outputs instead of
+    # inheriting laptop-specific names that may not exist there.
+    outputs = lib.mkIf (hostName == "precision") {
       "DP-3" = {
         scale = 1;
         position = { x = 0; y = 0; };

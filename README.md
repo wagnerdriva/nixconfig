@@ -16,8 +16,8 @@ repositório.
 
 ## Como ler esta configuração
 
-`flake.nix` fixa as dependências e monta a configuração chamada `precision`.
-`hosts/precision` contém tudo que depende deste notebook. `modules/nixos`
+`flake.nix` fixa as dependências e monta as configurações `precision` e `ryzen`.
+Os módulos em `hosts/` contêm o que depende de cada máquina. `modules/nixos`
 descreve o sistema compartilhável e `modules/home` descreve a sessão gráfica e
 as preferências do usuário `wagner`.
 
@@ -70,6 +70,17 @@ Aplicar uma alteração:
 ```bash
 sudo nixos-rebuild switch --flake ~/nixos-config#precision
 ```
+
+No desktop Ryzen, use o alvo correspondente:
+
+```bash
+sudo nixos-rebuild switch --flake ~/nixos-config#ryzen
+systemctl --user restart dms.service
+```
+
+O perfil Ryzen mantém a mesma configuração visual, mas deixa o Niri detectar
+automaticamente os monitores conectados. `minimalAgentSetup` reduz apenas as
+ferramentas de agentes e não remove o tema, o terminal, o DMS ou os wallpapers.
 
 Testar a avaliação sem trocar o sistema atual:
 
