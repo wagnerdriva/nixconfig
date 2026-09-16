@@ -1,6 +1,13 @@
 { ... }:
 let
-  colors = import ./colors.nix;
+  colors = {
+    background = "#2e3440";
+    text = "#d8dee9";
+    mutedAlt = "#81a1c1";
+    blue = "#88c0d0";
+    yellow = "#ebcb8b";
+    red = "#bf616a";
+  };
 in {
   programs.waybar = {
     enable = true;
@@ -102,8 +109,8 @@ in {
       }
 
       window#waybar {
-        background: rgba(17, 18, 21, 0.78);
-        border: 1px solid rgba(215, 215, 255, 0.10);
+        background: rgba(46, 52, 64, 0.78);
+        border: 1px solid rgba(216, 222, 233, 0.10);
         border-radius: 10px;
         color: ${colors.text};
       }
