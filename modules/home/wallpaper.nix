@@ -8,6 +8,7 @@ let
     cp ${../../assets/wallpapers/1123555.png} $out/1123555.png
     cp ${../../assets/wallpapers/1130462.png} $out/1130462.png
     cp ${../../assets/wallpapers/1330829.jpeg} $out/1330829.jpeg
+    cp ${../../assets/wallpapers/nord-mountains.png} $out/nord-mountains.png
   '';
   defaultWallpaper = "${wallpapers}/1330829.jpeg";
   dmsPackage = config.programs.dank-material-shell.package;
@@ -47,8 +48,9 @@ let
         'Ruínas Verdes' \
         'Pátio Noturno' \
         'Três Árvores' \
-        'Bosque Carmesim' |
-        fuzzel --dmenu --lines=6 --prompt='Wallpaper: ')" || exit 0
+        'Bosque Carmesim' \
+        'Montanhas Nórdicas' |
+        fuzzel --dmenu --lines=7 --prompt='Wallpaper: ')" || exit 0
 
       case "$selection" in
         'Buraco Negro') wallpaper="${wallpapers}/black-hole.png" ;;
@@ -57,6 +59,7 @@ let
         'Pátio Noturno') wallpaper="${wallpapers}/1123555.png" ;;
         'Três Árvores') wallpaper="${wallpapers}/1130462.png" ;;
         'Bosque Carmesim') wallpaper="${wallpapers}/1330829.jpeg" ;;
+        'Montanhas Nórdicas') wallpaper="${wallpapers}/nord-mountains.png" ;;
         *) exit 0 ;;
       esac
 

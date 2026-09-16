@@ -23,7 +23,7 @@ as preferências do usuário `wagner`.
 
 O visual usa a paleta Nord no terminal, no DankMaterialShell e nos clientes de
 desenvolvimento, com Niri e o wallpaper padrão em
-`assets/wallpapers/1330829.jpeg`. `Mod+W` abre o seletor dos seis wallpapers
+`assets/wallpapers/1330829.jpeg`. `Mod+W` abre o seletor dos sete wallpapers
 disponíveis e mantém a escolha entre reinícios.
 
 ## Ferramentas de desenvolvimento
