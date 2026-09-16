@@ -10,19 +10,34 @@ let
     cp ${../../assets/wallpapers/1330829.jpeg} $out/1330829.jpeg
   '';
   defaultWallpaper = "${wallpapers}/1330829.jpeg";
+  dmsPackage = config.programs.dank-material-shell.package;
   wallpaper-select = pkgs.writeShellApplication {
     name = "wallpaper-select";
-    runtimeInputs = with pkgs; [ awww coreutils fuzzel libnotify ];
+    runtimeInputs = [ dmsPackage ] ++ (with pkgs; [ coreutils fuzzel libnotify ]);
     text = ''
       state_dir="''${XDG_STATE_HOME:-$HOME/.local/state}/wallpaper"
       current="$state_dir/current"
       mkdir -p "$state_dir"
 
+      set_dms_wallpaper() {
+        local wallpaper="$1"
+        local attempt=0
+        while (( attempt < 40 )); do
+          if dms ipc call wallpaper set "$wallpaper" >/dev/null 2>&1; then
+            return 0
+          fi
+          attempt=$((attempt + 1))
+          sleep 0.25
+        done
+        echo "DMS nao respondeu para definir o wallpaper" >&2
+        return 1
+      }
+
       if [[ "''${1:-}" == "--restore" ]]; then
         if [[ ! -e "$current" ]]; then
           ln -sfn "${defaultWallpaper}" "$current"
         fi
-        awww img "$current" --transition-type fade
+        set_dms_wallpaper "$(readlink -f "$current")"
         exit 0
       fi
 
@@ -46,12 +61,12 @@ let
       esac
 
       ln -sfn "$wallpaper" "$current"
-      awww img "$current" --transition-type grow --transition-duration 1
+      set_dms_wallpaper "$wallpaper"
       notify-send --app-name="Wallpaper" "Wallpaper atualizado" "$selection"
     '';
   };
 in {
-  home.packages = [ pkgs.awww wallpaper-select ];
+  home.packages = [ wallpaper-select ];
 
   home.activation.initializeWallpaper = lib.hm.dag.entryAfter [ "writeBoundary" ] ''
     state_dir="${config.xdg.stateHome}/wallpaper"
@@ -63,7 +78,7 @@ in {
 
   programs.niri.settings = {
     spawn-at-startup = [
-      { command = [ "sh" "-c" "awww-daemon & sleep 1 && ${wallpaper-select}/bin/wallpaper-select --restore" ]; }
+      { command = [ "${wallpaper-select}/bin/wallpaper-select" "--restore" ]; }
     ];
     binds."Mod+W".action.spawn = [ "${wallpaper-select}/bin/wallpaper-select" ];
   };

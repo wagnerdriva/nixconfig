@@ -74,6 +74,14 @@ in
       currentThemeName = "custom";
       currentThemeCategory = "custom";
       customThemeFile = "~/.config/DankMaterialShell/nord.json";
+
+      # Keep the workspace switcher visible in the top-left bar with both the
+      # numeric index and the applications currently open there.
+      showWorkspaceSwitcher = true;
+      showWorkspaceIndex = true;
+      showWorkspaceApps = true;
+      maxWorkspaceIcons = 4;
+      workspaceActiveAppHighlightEnabled = true;
     };
   };
 
