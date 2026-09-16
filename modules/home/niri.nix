@@ -52,8 +52,8 @@ in {
       struts = { left = 18; right = 18; };
     };
 
-    # Waybar is started by its Home Manager systemd user service so it comes
-    # back automatically after a crash.
+    # DMS is started by its Home Manager systemd user service. Keep the
+    # network tray available in the shell through nm-applet.
     spawn-at-startup = [
       { command = [ "nm-applet" "--indicator" ]; }
     ];
@@ -150,9 +150,9 @@ in {
 
       "Mod+Return".action.spawn = [ "alacritty" ];
       "Mod+E".action.spawn = [ "nautilus" ];
-      "Mod+R".action.spawn = [ "fuzzel" ];
-      "Mod+L".action.spawn = [ "hyprlock" ];
-      "Mod+N".action.spawn = [ "swaync-client" "-t" "-sw" ];
+      "Mod+R".action.spawn = [ "dms" "ipc" "call" "spotlight" "toggle" ];
+      "Mod+L".action.spawn = [ "dms" "ipc" "call" "lock" "lock" ];
+      "Mod+N".action.spawn = [ "dms" "ipc" "call" "notifications" "toggle" ];
 
       "XF86AudioRaiseVolume" = {
         action.spawn = [ "wpctl" "set-volume" "@DEFAULT_AUDIO_SINK@" "0.1+" ];

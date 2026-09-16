@@ -20,6 +20,22 @@
         "type": "github"
       }
     },
+    "dank-qml-common": {
+      "flake": false,
+      "locked": {
+        "lastModified": 1788376015,
+        "narHash": "sha256-/tT8rTznLADndTwLBzdgzzgfJH1ZhYQibYo5v/F8U+U=",
+        "owner": "AvengeMedia",
+        "repo": "dank-qml-common",
+        "rev": "26396ce432d6c71c3f5367438f96f4a8d667e160",
+        "type": "github"
+      },
+      "original": {
+        "owner": "AvengeMedia",
+        "repo": "dank-qml-common",
+        "type": "github"
+      }
+    },
     "disko": {
       "inputs": {
         "nixpkgs": [
@@ -37,6 +53,42 @@
       "original": {
         "owner": "nix-community",
         "repo": "disko",
+        "type": "github"
+      }
+    },
+    "dms": {
+      "inputs": {
+        "dank-qml-common": "dank-qml-common",
+        "flake-compat": "flake-compat",
+        "nixpkgs": "nixpkgs_2"
+      },
+      "locked": {
+        "lastModified": 1789567530,
+        "narHash": "sha256-nh4uJPAgFTfSIyag8+5CMsxO2SWVTY55TGQNZCWMTJc=",
+        "owner": "AvengeMedia",
+        "repo": "DankMaterialShell",
+        "rev": "641d65cbd945300911da96ceb9ad100c7301cafc",
+        "type": "github"
+      },
+      "original": {
+        "owner": "AvengeMedia",
+        "repo": "DankMaterialShell",
+        "type": "github"
+      }
+    },
+    "flake-compat": {
+      "flake": false,
+      "locked": {
+        "lastModified": 1767039857,
+        "narHash": "sha256-vNpUSpF5Nuw8xvDLj2KCwwksIbjua2LZCqhV1LNRDns=",
+        "owner": "NixOS",
+        "repo": "flake-compat",
+        "rev": "5edf11c44bc78a0d334f6334cdaf7d60d732daab",
+        "type": "github"
+      },
+      "original": {
+        "owner": "NixOS",
+        "repo": "flake-compat",
         "type": "github"
       }
     },
@@ -172,6 +224,22 @@
     },
     "nixpkgs_2": {
       "locked": {
+        "lastModified": 1787135253,
+        "narHash": "sha256-RD2kNWCG+Bjo6h+JVjWVNntZs2GtRoeY2xHjts/FNkA=",
+        "owner": "nixos",
+        "repo": "nixpkgs",
+        "rev": "ffb3c9b700e759be2ef13237c9d8f953b32a1e46",
+        "type": "github"
+      },
+      "original": {
+        "owner": "nixos",
+        "ref": "nixos-unstable",
+        "repo": "nixpkgs",
+        "type": "github"
+      }
+    },
+    "nixpkgs_3": {
+      "locked": {
         "lastModified": 1788297115,
         "narHash": "sha256-Z+vUNbfd2FIKkWOTkcT7RYlh3oFCnig/d2eXD1SWf2E=",
         "owner": "NixOS",
@@ -190,9 +258,10 @@
       "inputs": {
         "ai-memory": "ai-memory",
         "disko": "disko",
+        "dms": "dms",
         "home-manager": "home-manager",
         "niri-flake": "niri-flake",
-        "nixpkgs": "nixpkgs_2"
+        "nixpkgs": "nixpkgs_3"
       }
     },
     "rust-overlay": {

@@ -68,6 +68,7 @@ let
 
     exec ${codex-package}/bin/codex \
       -c 'model_provider="driva_proxy"' \
+      -c 'tui.theme="nord"' \
       -c 'model_catalog_json="${./codex-models.json}"' \
       -c 'service_tier="fast"' \
       -c 'check_for_update_on_startup=false' \
@@ -79,11 +80,15 @@ let
   '';
 
   codex-openai = pkgs.writeShellScriptBin "codex-openai" ''
-    exec ${codex-package}/bin/codex -c 'model_provider="openai"' "$@"
+    exec ${codex-package}/bin/codex \
+      -c 'model_provider="openai"' \
+      -c 'tui.theme="nord"' \
+      "$@"
   '';
 
   codexProxySettings = pkgs.writeText "codex-proxy-settings.json" (builtins.toJSON {
     model_provider = "driva_proxy";
+    tui.theme = "nord";
     model_providers.driva_proxy = {
       name = "Driva VPN model proxy";
       base_url = "${drivaProxyUrl}/v1";
@@ -113,6 +118,8 @@ in
     document["model_provider"] = desired["model_provider"]
     providers = document.setdefault("model_providers", tomlkit.table())
     providers["driva_proxy"] = desired["model_providers"]["driva_proxy"]
+    tui = document.setdefault("tui", tomlkit.table())
+    tui["theme"] = desired["tui"]["theme"]
     updated = tomlkit.dumps(document)
     if updated != original:
         path.parent.mkdir(parents=True, exist_ok=True)
@@ -129,6 +136,84 @@ in
                 os.unlink(temporary)
     PY
   '');
+
+  home.file.".claude/themes/nord.json".text = builtins.toJSON {
+    name = "Nord";
+    base = "dark";
+    overrides = {
+      claude = "#88c0d0";
+      claudeShimmer = "#8fbcbb";
+      inverseText = "#2e3440";
+      inactive = "#616e88";
+      inactiveShimmer = "#81a1c1";
+      subtle = "#4c566a";
+      suggestion = "#81a1c1";
+      permission = "#ebcb8b";
+      permissionShimmer = "#d08770";
+      remember = "#b48ead";
+      success = "#a3be8c";
+      error = "#bf616a";
+      warning = "#ebcb8b";
+      warningShimmer = "#d08770";
+      merged = "#b48ead";
+      promptBorder = "#88c0d0";
+      promptBorderShimmer = "#8fbcbb";
+      planMode = "#81a1c1";
+      autoAccept = "#a3be8c";
+      bashBorder = "#d08770";
+      ide = "#5e81ac";
+      fastMode = "#b48ead";
+      fastModeShimmer = "#d8dee9";
+      effortUltra = "#88c0d0";
+      diffAdded = "#3b4f3d";
+      diffRemoved = "#4f3b42";
+      diffAddedDimmed = "#2f3e31";
+      diffRemovedDimmed = "#3f3035";
+      diffAddedWord = "#a3be8c";
+      diffRemovedWord = "#bf616a";
+      userMessageBackground = "#3b4252";
+      userMessageBackgroundHover = "#434c5e";
+      bashMessageBackgroundColor = "#2e3440";
+      memoryBackgroundColor = "#3b4252";
+      selectionBg = "#4c566a";
+      rate_limit_fill = "#88c0d0";
+      rate_limit_empty = "#4c566a";
+      briefLabelYou = "#8fbcbb";
+      briefLabelClaude = "#88c0d0";
+    };
+  };
+
+  # Claude Code is updated outside Nix, so merge the theme preference into its
+  # mutable settings file without replacing any API, permission, or hook data.
+  home.activation.claudeTheme = lib.hm.dag.entryAfter [ "writeBoundary" ] ''
+    run ${pkgs.python3}/bin/python - "${config.home.homeDirectory}/.claude/settings.json" <<'PY'
+    import json, os, pathlib, shutil, tempfile, sys
+
+    path = pathlib.Path(sys.argv[1])
+    original = path.read_text() if path.exists() else ""
+    try:
+        document = json.loads(original) if original else {}
+    except json.JSONDecodeError:
+        document = {}
+    if not isinstance(document, dict):
+        document = {}
+    document["theme"] = "custom:nord"
+    updated = json.dumps(document, indent=2, ensure_ascii=False) + "\n"
+    if updated != original:
+        path.parent.mkdir(parents=True, exist_ok=True)
+        backup = path.with_name("settings.json.before-managed-theme")
+        if path.exists() and not backup.exists():
+            shutil.copy2(path, backup)
+        fd, temporary = tempfile.mkstemp(dir=path.parent, prefix=".settings-theme-")
+        try:
+            with os.fdopen(fd, "w") as output:
+                output.write(updated)
+            os.replace(temporary, path)
+        finally:
+            if os.path.exists(temporary):
+                os.unlink(temporary)
+    PY
+  '';
 
   systemd.user.services.ai-memory = lib.mkIf (!minimalAgentSetup) {
     Unit.Description = "Local shared memory for coding agents";

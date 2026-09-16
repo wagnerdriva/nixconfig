@@ -4,21 +4,17 @@
   ] ++ [
     ./celluloid.nix
     ./clipboard.nix
+    ./dank-material-shell.nix
     ./development.nix
-    ./fuzzel.nix
-    ./hypridle.nix
-    ./hyprlock.nix
     ./kanshi.nix
     ./mpv.nix
     ./niri.nix
     ./query-on.nix
     ./screen-recording.nix
-    ./swaync.nix
     ./terminal.nix
     ./udiskie.nix
     ./wallpaper.nix
     ./xcompose.nix
-    ./waybar.nix
     ./zed.nix
   ];
 

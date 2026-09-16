@@ -21,9 +21,13 @@
       inputs.nixpkgs.follows = "nixpkgs";
     };
 
+    dms = {
+      url = "github:AvengeMedia/DankMaterialShell";
+    };
+
   };
 
-  outputs = { nixpkgs, home-manager, disko, niri-flake, ai-memory, ... }:
+  outputs = { nixpkgs, home-manager, disko, niri-flake, ai-memory, dms, ... }:
     let
       system = "x86_64-linux";
       primaryUser = "wagner";
@@ -53,6 +57,7 @@
                     ai-memory.packages.${system}.default;
                   queryOnPackage = null;
                   inherit minimalAgentSetup;
+                  inherit dms;
                 };
               };
             }

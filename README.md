@@ -21,9 +21,10 @@ repositório.
 descreve o sistema compartilhável e `modules/home` descreve a sessão gráfica e
 as preferências do usuário `wagner`.
 
-O visual usa a paleta Broken Pine, Niri, Waybar, Fuzzel, SwayNC, Hyprlock e o
-wallpaper padrão em `assets/wallpapers/1330829.jpeg`. `Mod+W` abre o seletor dos
-seis wallpapers disponíveis e mantém a escolha entre reinícios.
+O visual usa a paleta Nord no terminal, no DankMaterialShell e nos clientes de
+desenvolvimento, com Niri e o wallpaper padrão em
+`assets/wallpapers/1330829.jpeg`. `Mod+W` abre o seletor dos seis wallpapers
+disponíveis e mantém a escolha entre reinícios.
 
 ## Ferramentas de desenvolvimento
 
@@ -43,7 +44,7 @@ O wrapper respeita o modelo e o nível de raciocínio salvos no Codex. A chave �
 lida antes de iniciar o cliente e fornecida por `env_key`, evitando executar
 um comando de autenticação durante a atualização do catálogo de modelos.
 Para Claude Code, há também os aliases `claude-max`, `claude-codex` e
-`claude-glm`.
+`claude-glm`. O tema Nord desses clientes é persistido pelo Home Manager.
 
 A credencial compartilhada pelos dois clientes fica somente na máquina, em
 `~/.config/driva/proxy-key`, com permissão `0600`. Esse arquivo não pertence ao
