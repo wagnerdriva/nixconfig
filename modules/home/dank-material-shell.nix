@@ -106,9 +106,10 @@ in
         spacing = 4;
         innerPadding = 4;
         barInsetPadding = -1;
-        # Niri reserves 18 px at each side for tiled windows. DMS adds the
-        # 4 px spacing below, so 14 px here makes the bar share that width.
-        barLengthPadding = 14;
+        # Niri insets a tiled window by the 18 px strut plus half of the 9 px
+        # gap, putting its edge at 22 px. DMS adds the 4 px spacing below, so
+        # 18 px here lands the bar on that same edge.
+        barLengthPadding = 18;
         bottomGap = 0;
         attachToScreenEdge = false;
         transparency = 0.78;

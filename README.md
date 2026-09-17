@@ -75,12 +75,20 @@ No desktop Ryzen, use o alvo correspondente:
 
 ```bash
 sudo nixos-rebuild switch --flake ~/nixos-config#ryzen
-systemctl --user restart dms.service
 ```
 
 O perfil Ryzen mantém a mesma configuração visual, mas deixa o Niri detectar
 automaticamente os monitores conectados. `minimalAgentSetup` reduz apenas as
 ferramentas de agentes e não remove o tema, o terminal, o DMS ou os wallpapers.
+
+O DMS lê `settings.json` uma única vez, na inicialização. O `switch` troca o
+symlink para a nova geração, mas o processo em execução continua com os valores
+antigos, então qualquer alteração em `modules/home/dank-material-shell.nix`
+exige um restart explícito em qualquer host:
+
+```bash
+systemctl --user restart dms.service
+```
 
 Testar a avaliação sem trocar o sistema atual:
 
