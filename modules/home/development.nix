@@ -1,4 +1,4 @@
-{ config, lib, pkgs, aiMemoryPackage ? null, minimalAgentSetup, ... }:
+{ config, lib, pkgs, aiMemoryPackage ? null, herdrPackage, minimalAgentSetup, ... }:
 let
   drivaProxyUrl = "http://vpn-driva.netbird.driva.io:8317";
   proxyKeyFile = "$HOME/.config/driva/proxy-key";
@@ -255,6 +255,7 @@ in
     codex-driva
     codex-openai
     driva-proxy-token
+    herdrPackage
   ] ++ lib.optionals (!minimalAgentSetup) [
     (callPackage ../../packages/chatgpt.nix { codexCli = codex-driva; })
     aiMemoryPackage

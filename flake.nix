@@ -6,6 +6,8 @@
 
     ai-memory.url = "github:akitaonrails/ai-memory";
 
+    herdr.url = "github:herdrdev/herdr";
+
     home-manager = {
       url = "github:nix-community/home-manager/release-26.05";
       inputs.nixpkgs.follows = "nixpkgs";
@@ -27,7 +29,7 @@
 
   };
 
-  outputs = { nixpkgs, home-manager, disko, niri-flake, ai-memory, dms, ... }:
+  outputs = { nixpkgs, home-manager, disko, niri-flake, ai-memory, dms, herdr, ... }:
     let
       system = "x86_64-linux";
       primaryUser = "wagner";
@@ -55,6 +57,7 @@
                   inherit primaryUser hostName;
                   aiMemoryPackage = if minimalAgentSetup then null else
                     ai-memory.packages.${system}.default;
+                  herdrPackage = herdr.packages.${system}.default;
                   queryOnPackage = null;
                   inherit minimalAgentSetup;
                   inherit dms;
