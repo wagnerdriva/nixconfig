@@ -45,7 +45,9 @@ in {
         { proportion = 0.66667; }
         { proportion = 0.8; }
       ];
-      default-column-width = { proportion = 0.6; };
+      # Two default columns should fit side by side without horizontal
+      # scrolling. Larger widths remain available through the preset shortcut.
+      default-column-width = { proportion = 0.5; };
       focus-ring = {
         width = 2;
         active.color = "#${colors.withAlpha colors.blue "80"}";
@@ -86,18 +88,18 @@ in {
           { app-id = "^google-chrome.*$"; }
           { app-id = "^chromium.*$"; }
         ];
-        default-column-width = { proportion = 0.7; };
+        default-column-width = { proportion = 0.5; };
       }
       {
         matches = [{ app-id = "^zed.*$"; }];
-        default-column-width = { proportion = 0.75; };
+        default-column-width = { proportion = 0.5; };
       }
       {
         matches = [
           { app-id = "^Alacritty$"; }
           { app-id = "^org.gnome.Nautilus$"; }
         ];
-        default-column-width = { proportion = 0.55; };
+        default-column-width = { proportion = 0.5; };
       }
       {
         matches = [
