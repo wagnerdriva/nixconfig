@@ -140,6 +140,14 @@ let
 
   pi-driva = pkgs.writeShellScriptBin "pi" ''
     set -eu
+
+    # The session exports ANTHROPIC_API_KEY for Claude Code, and pi reads any
+    # provider credential it finds, which would list every built-in Anthropic
+    # model next to the proxy catalog. Only Driva should be reachable here.
+    for name in $(env | sed -n 's/^\([A-Z0-9_]*\(API_KEY\|AUTH_TOKEN\)\)=.*/\1/p'); do
+      unset "$name"
+    done
+
     DRIVA_PROXY_API_KEY="$(${driva-proxy-token}/bin/driva-proxy-token)"
     export DRIVA_PROXY_API_KEY
 
