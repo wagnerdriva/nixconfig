@@ -137,6 +137,7 @@ in {
       celluloid
       eog
       gnupg
+      gws
       (google-chrome.override {
         # Chrome's Wayland text-input-v3 path ignores the custom XCompose
         # sequence that maps dead acute + c to c-cedilla.
