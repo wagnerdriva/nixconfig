@@ -6,7 +6,7 @@ let
     target=power-saver
     for supply in /sys/class/power_supply/*; do
       [ -r "$supply/type" ] || continue
-      [ "$(< "$supply/type")" = "Mains" ] || continue
+      [ "$(< "$supply/type")" != "Battery" ] || continue
       [ -r "$supply/online" ] || continue
       if [ "$(< "$supply/online")" = "1" ]; then
         target=performance
