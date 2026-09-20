@@ -46,7 +46,16 @@ um comando de autenticação durante a atualização do catálogo de modelos.
 Para Claude Code, há também os aliases `claude-max`, `claude-codex` e
 `claude-glm`. O tema Nord desses clientes é persistido pelo Home Manager.
 
-A credencial compartilhada pelos dois clientes fica somente na máquina, em
+O Pi (`pi`) também abre usando o proxy da Driva e é instalado nos dois hosts.
+O Home Manager escreve `~/.pi/agent/models.json` com o catálogo do proxy: os
+modelos GPT, GLM e Kimi ficam no provedor `driva`, que fala Responses, e os
+modelos Claude ficam em `driva-claude`, que fala Anthropic Messages. O proxy só
+roteia Claude pelo prefixo `claude/`, o mesmo usado em
+`ANTHROPIC_DEFAULT_*_MODEL`. Cada modelo declara a janela de contexto que o
+endpoint aceita e apenas os níveis de raciocínio que ele suporta. O Pi relê esse
+arquivo sempre que o seletor de modelos abre.
+
+A credencial compartilhada por esses clientes fica somente na máquina, em
 `~/.config/driva/proxy-key`, com permissão `0600`. Esse arquivo não pertence ao
 repo e nunca passa pelo Nix store.
 

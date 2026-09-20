@@ -49,6 +49,65 @@ let
       "$@"
   '';
 
+  pi-package = pkgs.callPackage ../../packages/pi.nix { };
+
+  # Levels the Driva catalog advertises for a model. Everything else is marked
+  # unsupported so pi never offers an effort the proxy would reject.
+  piThinkingLevels = supported:
+    lib.genAttrs [ "off" "minimal" "low" "medium" "high" "xhigh" "max" ]
+      (level: if builtins.elem level supported then level else null);
+
+  mkDrivaModel =
+    { id
+    , name
+    , contextWindow
+    , maxTokens ? 128000
+    , levels ? [ "low" "medium" "high" "xhigh" "max" ]
+    }: {
+      inherit id name contextWindow maxTokens;
+      reasoning = true;
+      input = [ "text" "image" ];
+      thinkingLevelMap = piThinkingLevels levels;
+    };
+
+  # Context windows mirror codex-models.json: the proxy catalog is what the
+  # endpoint actually accepts, and it stays below the larger advertised ceiling.
+  drivaResponsesModels = map mkDrivaModel [
+    { id = "gpt-6-astra"; name = "GPT 6.0 Astra"; contextWindow = 272000; }
+    { id = "gpt-5.6-sol"; name = "GPT 5.6 Sol"; contextWindow = 272000; }
+    { id = "gpt-5.6-terra"; name = "GPT 5.6 Terra"; contextWindow = 272000; }
+    { id = "gpt-5.6-luna"; name = "GPT 5.6 Luna"; contextWindow = 272000; }
+    {
+      id = "glm-5.3";
+      name = "GLM 5.3";
+      contextWindow = 272000;
+      maxTokens = 131072;
+      levels = [ "low" "medium" "high" ];
+    }
+    {
+      id = "glm-5.3-flash";
+      name = "GLM 5.3 Flash";
+      contextWindow = 272000;
+      maxTokens = 131072;
+      levels = [ "low" "medium" "high" ];
+    }
+    {
+      id = "kimi-k3";
+      name = "Kimi K3";
+      contextWindow = 1048576;
+      maxTokens = 131072;
+      levels = [ "low" "high" "max" ];
+    }
+  ];
+
+  # The proxy only routes Claude through its `claude/` namespace, serving it as
+  # native Anthropic Messages. Same prefix ANTHROPIC_DEFAULT_*_MODEL already uses.
+  drivaMessagesModels = map mkDrivaModel [
+    { id = "claude/claude-fable-5-1"; name = "Claude Fable 5.1"; contextWindow = 1000000; }
+    { id = "claude/claude-opus-5"; name = "Claude Opus 5"; contextWindow = 1000000; }
+    { id = "claude/claude-sonnet-5"; name = "Claude Sonnet 5"; contextWindow = 1000000; }
+  ];
+
   driva-proxy-token = pkgs.writeShellScriptBin "driva-proxy-token" ''
     set -eu
 
@@ -77,6 +136,14 @@ let
       -c 'model_providers.driva_proxy.wire_api="responses"' \
       -c 'model_providers.driva_proxy.env_key="DRIVA_PROXY_API_KEY"' \
       "$@"
+  '';
+
+  pi-driva = pkgs.writeShellScriptBin "pi" ''
+    set -eu
+    DRIVA_PROXY_API_KEY="$(${driva-proxy-token}/bin/driva-proxy-token)"
+    export DRIVA_PROXY_API_KEY
+
+    exec ${pi-package}/bin/pi "$@"
   '';
 
   codex-openai = pkgs.writeShellScriptBin "codex-openai" ''
@@ -136,6 +203,25 @@ in
                 os.unlink(temporary)
     PY
   '');
+
+  # pi reads this file every time the model picker opens, so the proxy catalog
+  # stays declarative. The key itself is resolved by the wrapper, not stored.
+  home.file.".pi/agent/models.json".text = builtins.toJSON {
+    providers = {
+      driva = {
+        baseUrl = "${drivaProxyUrl}/v1";
+        api = "openai-responses";
+        apiKey = "$DRIVA_PROXY_API_KEY";
+        models = drivaResponsesModels;
+      };
+      driva-claude = {
+        baseUrl = drivaProxyUrl;
+        api = "anthropic-messages";
+        apiKey = "$DRIVA_PROXY_API_KEY";
+        models = drivaMessagesModels;
+      };
+    };
+  };
 
   home.file.".claude/themes/nord.json".text = builtins.toJSON {
     name = "Nord";
@@ -256,6 +342,7 @@ in
     codex-openai
     driva-proxy-token
     herdrPackage
+    pi-driva
   ] ++ lib.optionals (!minimalAgentSetup) [
     (callPackage ../../packages/chatgpt.nix { codexCli = codex-driva; })
     aiMemoryPackage
