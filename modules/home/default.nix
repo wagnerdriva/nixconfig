@@ -1,4 +1,4 @@
-{ lib, pkgs, primaryUser, minimalAgentSetup, ... }: {
+{ lib, pkgs, primaryUser, hostName, minimalAgentSetup, hermes, ... }: {
   imports = lib.optionals (!minimalAgentSetup) [
     ./agent-instructions.nix
   ] ++ [
@@ -16,6 +16,14 @@
     ./wallpaper.nix
     ./xcompose.nix
     ./zed.nix
+  ] ++ lib.optionals (hostName == "ryzen") [
+    hermes.homeManagerModules.default
+    {
+      programs.hermes-agent = {
+        enable = true;
+        package = hermes.packages.${pkgs.stdenv.hostPlatform.system}.minimal;
+      };
+    }
   ];
 
   home = {
