@@ -349,6 +349,10 @@ in
     codex-driva
     codex-openai
     driva-proxy-token
+
+    # Both hosts track this repository, so both need the git credential helper.
+    gh
+
     herdrPackage
     pi-driva
   ] ++ lib.optionals (!minimalAgentSetup) [
@@ -366,7 +370,6 @@ in
     gnumake
     pkg-config
     git-lfs
-    gh
     jq
     ripgrep
     fd
