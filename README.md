@@ -90,6 +90,13 @@ O perfil Ryzen mantém a mesma configuração visual, mas deixa o Niri detectar
 automaticamente os monitores conectados. `minimalAgentSetup` reduz apenas as
 ferramentas de agentes e não remove o tema, o terminal, o DMS ou os wallpapers.
 
+O `ai-memory` registra o próprio MCP e os próprios hooks escrevendo direto em
+`~/.codex`, fora do controle do Nix. Ligar `minimalAgentSetup` em um host que já
+rodou o perfil completo remove o pacote e o serviço, mas deixa para trás
+`~/.codex/hooks.json`, a entrada `[mcp_servers.ai-memory]` e
+`~/.local/share/ai-memory`. Os hooks seguem gravando no spool sem nenhum daemon
+para drená-lo, então essa limpeza precisa ser feita à mão no host.
+
 O DMS lê `settings.json` uma única vez, na inicialização. O `switch` troca o
 symlink para a nova geração, mas o processo em execução continua com os valores
 antigos, então qualquer alteração em `modules/home/dank-material-shell.nix`
