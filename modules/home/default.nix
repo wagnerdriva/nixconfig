@@ -1,4 +1,8 @@
-{ lib, pkgs, primaryUser, hostName, minimalAgentSetup, hermes, ... }: {
+{ config, lib, pkgs, primaryUser, hostName, minimalAgentSetup, hermes, ... }:
+let
+  drivaProxyUrl = "http://vpn-driva.netbird.driva.io:8317";
+  drivaProxyKeyFile = "${config.home.homeDirectory}/.config/driva/proxy-key";
+in {
   imports = lib.optionals (!minimalAgentSetup) [
     ./agent-instructions.nix
   ] ++ [
@@ -23,8 +27,49 @@
         enable = true;
         package = hermes.packages.${pkgs.stdenv.hostPlatform.system}.minimal;
       };
+      # Enable only Hermes' state/configuration activation. The gateway and
+      # backend remain disabled, so no background service is started.
+      services.hermes-agent = {
+        enable = true;
+        settings = {
+          model = {
+            provider = "custom";
+            default = "gpt-5.6-sol";
+            base_url = "${drivaProxyUrl}/v1";
+            key_env = "DRIVA_PROXY_API_KEY";
+          };
+          agent.reasoning_effort = "xhigh";
+        };
+      };
     }
   ];
+
+  # Hermes reads credentials from its own .env file. Populate just the proxy
+  # variable from the machine-local key after the official state setup, so the
+  # secret never enters the Nix store or the repository.
+  home.activation.hermesDrivaProxy = lib.mkIf (hostName == "ryzen")
+    (lib.hm.dag.entryAfter [ "hermesAgentSetup" ] ''
+      set -eu
+      env_file="${config.home.homeDirectory}/.hermes/.env"
+      key_file="${drivaProxyKeyFile}"
+      temporary="$(${pkgs.coreutils}/bin/mktemp "${config.home.homeDirectory}/.hermes/.env.XXXXXX")"
+      trap 'rm -f "$temporary"' EXIT
+
+      if [ -f "$env_file" ]; then
+        ${pkgs.gnused}/bin/sed '/^[[:space:]]*DRIVA_PROXY_API_KEY[[:space:]]*=/d' \
+          "$env_file" > "$temporary"
+      fi
+      if [ -r "$key_file" ]; then
+        proxy_key="$(${pkgs.coreutils}/bin/tr -d '\r\n' < "$key_file")"
+        if [ -n "$proxy_key" ]; then
+          printf 'DRIVA_PROXY_API_KEY=%s\n' "$proxy_key" >> "$temporary"
+        fi
+      fi
+
+      ${pkgs.coreutils}/bin/chmod 600 "$temporary"
+      ${pkgs.coreutils}/bin/mv -f "$temporary" "$env_file"
+      trap - EXIT
+    '');
 
   home = {
     username = primaryUser;
