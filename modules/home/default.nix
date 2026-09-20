@@ -70,6 +70,8 @@ in {
         response_border: "#81A1C1"
         status_bar_bg: "#3B4252"
         status_bar_text: "#D8DEE9"
+        status_bar_strong: "#88C0D0"
+        status_bar_dim: "#81A1C1"
         status_bar_good: "#A3BE8C"
         status_bar_warn: "#EBCB8B"
         status_bar_critical: "#BF616A"
