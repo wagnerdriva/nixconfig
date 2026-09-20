@@ -39,10 +39,51 @@ in {
             key_env = "DRIVA_PROXY_API_KEY";
           };
           agent.reasoning_effort = "xhigh";
+          display.skin = "nord";
         };
       };
     }
   ];
+
+  # Keep the Hermes CLI aligned with the Nord palette used elsewhere on the
+  # desktop. The Hermes package loads custom skins from ~/.hermes/skins.
+  home.file.".hermes/skins/nord.yaml" = lib.mkIf (hostName == "ryzen") {
+    text = ''
+      name: nord
+      description: Nord palette — arctic blue tones with calm contrast
+
+      colors:
+        background: "#2E3440"
+        ui_accent: "#88C0D0"
+        banner_accent: "#81A1C1"
+        banner_title: "#8FBCBB"
+        banner_text: "#E5E9F0"
+        ui_text: "#D8DEE9"
+        banner_dim: "#81A1C1"
+        banner_border: "#4C566A"
+        ui_border: "#4C566A"
+        ui_ok: "#A3BE8C"
+        ui_warn: "#EBCB8B"
+        ui_error: "#BF616A"
+        prompt: "#88C0D0"
+        input_rule: "#88C0D0"
+        response_border: "#81A1C1"
+        status_bar_bg: "#3B4252"
+        status_bar_text: "#D8DEE9"
+        status_bar_good: "#A3BE8C"
+        status_bar_warn: "#EBCB8B"
+        status_bar_critical: "#BF616A"
+        session_label: "#8FBCBB"
+        session_border: "#4C566A"
+
+      branding:
+        agent_name: J.A.R.V.I.S.
+        prompt_symbol: "❯"
+        help_header: "J.A.R.V.I.S. — Commands"
+
+      tool_prefix: "┊"
+    '';
+  };
 
   # Hermes reads credentials from its own .env file. Populate just the proxy
   # variable from the machine-local key after the official state setup, so the
