@@ -231,14 +231,9 @@ in
     };
   };
 
-  # Keep the Herdr integration declarative. Pi extensions are only loaded by
-  # Pi itself, so the mode check in the upstream asset is unnecessary here.
-  home.file.".pi/agent/extensions/herdr-agent-state.ts".source = pkgs.writeText
-    "herdr-agent-state-pi.ts"
-    (builtins.replaceStrings
-      [ "    // TUI only: RPC/JSON/print modes are headless (no PTY herdr can display),\n    // and RPC still reports hasUI=true, so mode is the reliable gate.\n    if (ctx?.mode !== \"tui\") {\n      return;\n    }\n" ]
-      [ "" ]
-      (builtins.readFile herdrPiExtension));
+  # Same file `herdr integration install pi` writes; pinning the asset from
+  # the herdr flake keeps it declarative and in lockstep with the binary.
+  home.file.".pi/agent/extensions/herdr-agent-state.ts".source = herdrPiExtension;
 
   home.file.".claude/themes/nord.json".text = builtins.toJSON {
     name = "Nord";
