@@ -80,6 +80,18 @@ Aplicar uma alteração:
 sudo nixos-rebuild switch --flake ~/nixos-config#precision
 ```
 
+Para atualizar o Pi, altere `version` e `hash` em
+[`packages/pi.nix`](packages/pi.nix), usando o hash SRI do asset
+`pi-linux-x64.tar.gz` da release desejada. Depois valide e aplique:
+
+```bash
+nix flake check
+sudo nixos-rebuild switch --flake ~/nixos-config#precision
+```
+
+O `pi update` não altera essa instalação porque o executável vem do Nix Store;
+o wrapper `pi` é recriado pelo Home Manager quando a geração do sistema muda.
+
 No desktop Ryzen, use o alvo correspondente:
 
 ```bash

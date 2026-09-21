@@ -9,11 +9,11 @@
 }:
 stdenvNoCC.mkDerivation rec {
   pname = "pi";
-  version = "0.86.1";
+  version = "0.87.0";
 
   src = fetchurl {
     url = "https://github.com/earendil-works/pi/releases/download/v${version}/pi-linux-x64.tar.gz";
-    hash = "sha256-JJT1WHqHdKECltAKflBOetBVlsqT4FfLiTcsixp/Rqk=";
+    hash = "sha256-9V0CZSF1zT8i5tuCI8k++XoIc4KrtR3JzhMPwE3o90Y=";
   };
 
   nativeBuildInputs = [ autoPatchelfHook makeWrapper ];
