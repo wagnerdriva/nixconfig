@@ -1,4 +1,4 @@
-{ config, lib, pkgs, aiMemoryPackage ? null, herdrPackage, minimalAgentSetup, ... }:
+{ config, lib, pkgs, aiMemoryPackage ? null, herdrPackage, herdrPiExtension, minimalAgentSetup, ... }:
 let
   drivaProxyUrl = "http://vpn-driva.netbird.driva.io:8317";
   proxyKeyFile = "$HOME/.config/driva/proxy-key";
@@ -230,6 +230,10 @@ in
       };
     };
   };
+
+  # Same file `herdr integration install pi` writes; pinning the asset from
+  # the herdr flake keeps it declarative and in lockstep with the binary.
+  home.file.".pi/agent/extensions/herdr-agent-state.ts".source = herdrPiExtension;
 
   home.file.".claude/themes/nord.json".text = builtins.toJSON {
     name = "Nord";

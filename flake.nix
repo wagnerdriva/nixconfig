@@ -60,6 +60,7 @@
                   aiMemoryPackage = if minimalAgentSetup then null else
                     ai-memory.packages.${system}.default;
                   herdrPackage = herdr.packages.${system}.default;
+                  herdrPiExtension = "${herdr}/src/integration/assets/pi/herdr-agent-state.ts";
                   inherit hermes;
                   queryOnPackage = null;
                   inherit minimalAgentSetup;
