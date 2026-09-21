@@ -40,6 +40,13 @@ in {
           };
           agent.reasoning_effort = "xhigh";
           display.skin = "nord";
+          # Keep the CLI focused on the conversation: hide model reasoning,
+          # tool progress, interim narration, and post-turn diagnostics.
+          display.show_reasoning = false;
+          display.focus_view = true;
+          display.interim_assistant_messages = false;
+          display.show_commentary = false;
+          display.turn_summary = false;
         };
       };
     }
