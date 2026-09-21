@@ -231,9 +231,14 @@ in
     };
   };
 
-  # Same file `herdr integration install pi` writes; pinning the asset from
-  # the herdr flake keeps it declarative and in lockstep with the binary.
-  home.file.".pi/agent/extensions/herdr-agent-state.ts".source = herdrPiExtension;
+  # Keep the Herdr integration declarative while accepting both mode labels
+  # used by Pi releases for an interactive TUI session.
+  home.file.".pi/agent/extensions/herdr-agent-state.ts".source = pkgs.writeText
+    "herdr-agent-state-pi.ts"
+    (builtins.replaceStrings
+      [ "if (ctx?.mode !== \"tui\") {" ]
+      [ "if (ctx?.mode && ctx.mode !== \"tui\" && ctx.mode !== \"interactive\") {" ]
+      (builtins.readFile herdrPiExtension));
 
   home.file.".claude/themes/nord.json".text = builtins.toJSON {
     name = "Nord";
