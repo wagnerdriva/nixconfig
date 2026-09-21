@@ -231,13 +231,13 @@ in
     };
   };
 
-  # Keep the Herdr integration declarative while accepting both mode labels
-  # used by Pi releases for an interactive TUI session.
+  # Keep the Herdr integration declarative. Pi extensions are only loaded by
+  # Pi itself, so the mode check in the upstream asset is unnecessary here.
   home.file.".pi/agent/extensions/herdr-agent-state.ts".source = pkgs.writeText
     "herdr-agent-state-pi.ts"
     (builtins.replaceStrings
-      [ "if (ctx?.mode !== \"tui\") {" ]
-      [ "if (ctx?.mode && ctx.mode !== \"tui\" && ctx.mode !== \"interactive\") {" ]
+      [ "    // TUI only: RPC/JSON/print modes are headless (no PTY herdr can display),\n    // and RPC still reports hasUI=true, so mode is the reliable gate.\n    if (ctx?.mode !== \"tui\") {\n      return;\n    }\n" ]
+      [ "" ]
       (builtins.readFile herdrPiExtension));
 
   home.file.".claude/themes/nord.json".text = builtins.toJSON {
