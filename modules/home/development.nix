@@ -141,6 +141,10 @@ let
   pi-driva = pkgs.writeShellScriptBin "pi" ''
     set -eu
 
+    # The Nix launcher uses the system loader, so tell Herdr which screen
+    # manifest applies before it starts the hidden Pi process.
+    export HERDR_AGENT=pi
+
     # The session exports ANTHROPIC_API_KEY for Claude Code, and pi reads any
     # provider credential it finds, which would list every built-in Anthropic
     # model next to the proxy catalog. Only Driva should be reachable here.
