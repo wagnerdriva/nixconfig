@@ -460,6 +460,10 @@ in
     };
 
     interactiveShellInit = lib.mkAfter ''
+      # Clear a value inherited by the graphical session before launching
+      # Claude from an interactive shell.
+      set -e CLAUDE_CODE_EFFORT_LEVEL
+
       # The key is copied privately to this machine and never enters Git or
       # the Nix store. Both Claude Code and Codex use the same proxy account.
       if test -r "${proxyKeyFile}"
