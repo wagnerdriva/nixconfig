@@ -418,6 +418,7 @@ in
     gnumake
     pkg-config
     git-lfs
+    google-cloud-sdk
     jq
     ripgrep
     fd
