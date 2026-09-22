@@ -339,6 +339,12 @@ in
         document = {}
     if not isinstance(document, dict):
         document = {}
+    environment = document.get("env")
+    if isinstance(environment, dict):
+        # The effort level is selected by Claude's per-model settings. Keeping
+        # this legacy environment override makes it win over the current
+        # session and produces a misleading startup warning.
+        environment.pop("CLAUDE_CODE_EFFORT_LEVEL", None)
     document["theme"] = "custom:nord"
     updated = json.dumps(document, indent=2, ensure_ascii=False) + "\n"
     if updated != original:
@@ -433,7 +439,6 @@ in
     ANTHROPIC_DEFAULT_FABLE_MODEL = "claude/claude-fable-5-1";
     CLAUDE_CODE_DISABLE_ADAPTIVE_THINKING = "1";
     CLAUDE_CODE_DISABLE_AUTO_MEMORY = "1";
-    CLAUDE_CODE_EFFORT_LEVEL = "max";
     ORCA_CLI_COMMAND = "orca-ide";
   };
 
@@ -446,7 +451,8 @@ in
     shellAliases = lib.optionalAttrs (!minimalAgentSetup) {
       # The official updater keeps the current Claude Code binary here. The
       # Nix package can lag behind new model aliases (including Fable 5.1).
-      claude = "/home/wagner/.local/bin/claude";
+      # Drop stale values inherited by an already-running graphical session.
+      claude = "env -u CLAUDE_CODE_EFFORT_LEVEL /home/wagner/.local/bin/claude";
       zed = "zeditor";
       claude-max = "env ANTHROPIC_MODEL=claude/opus claude";
       claude-codex = "env ANTHROPIC_MODEL=codex/opus claude";
