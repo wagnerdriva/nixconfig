@@ -74,6 +74,8 @@ let
   # endpoint actually accepts, and it stays below the larger advertised ceiling.
   drivaResponsesModels = map mkDrivaModel [
     { id = "gpt-6-astra"; name = "GPT 6.0 Astra"; contextWindow = 272000; }
+    { id = "gpt-6-sol"; name = "GPT 6.0 Sol"; contextWindow = 272000; }
+    { id = "gpt-6-luna"; name = "GPT 6.0 Luna"; contextWindow = 272000; }
     { id = "gpt-5.6-sol"; name = "GPT 5.6 Sol"; contextWindow = 272000; }
     { id = "gpt-5.6-terra"; name = "GPT 5.6 Terra"; contextWindow = 272000; }
     { id = "gpt-5.6-luna"; name = "GPT 5.6 Luna"; contextWindow = 272000; }
