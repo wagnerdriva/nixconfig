@@ -18,11 +18,11 @@
       colors = {
         primary = {
           background = "#2e3440";
-          foreground = "#d8dee9";
+          foreground = "#88c0d0";
         };
         cursor = {
           text = "#2e3440";
-          cursor = "#d8dee9";
+          cursor = "#88c0d0";
         };
         selection = {
           text = "#2e3440";
