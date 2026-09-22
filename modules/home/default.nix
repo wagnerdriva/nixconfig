@@ -23,14 +23,17 @@ in {
   ] ++ lib.optionals (hostName == "ryzen") [
     hermes.homeManagerModules.default
     {
-      programs.hermes-agent = {
-        enable = true;
-        package = hermes.packages.${pkgs.stdenv.hostPlatform.system}.minimal;
-      };
+      # programs.hermes-agent.package defaults to the services package with
+      # extraDependencyGroups applied, so the CLI gets the same build.
+      programs.hermes-agent.enable = true;
       # Enable only Hermes' state/configuration activation. The gateway and
       # backend remain disabled, so no background service is started.
       services.hermes-agent = {
         enable = true;
+        package = hermes.packages.${pkgs.stdenv.hostPlatform.system}.minimal;
+        # The minimal package omits the Anthropic SDK, which the driva-claude
+        # provider (api_mode: anthropic_messages) needs at runtime.
+        extraDependencyGroups = [ "anthropic" ];
         settings = {
           model = {
             provider = "custom";
