@@ -235,6 +235,46 @@ in
     };
   };
 
+  # Keep Pi's custom Nord theme declarative. Pi hot-reloads the active theme
+  # when this file changes.
+  home.file.".pi/agent/themes/jarvis-nord.json".source = ./pi-themes/jarvis-nord.json;
+
+  # Preserve Pi settings while keeping the selected theme managed.
+  home.activation.piTheme = lib.hm.dag.entryAfter [ "writeBoundary" ] ''
+    run ${pkgs.python3}/bin/python - "${config.home.homeDirectory}/.pi/agent/settings.json" <<'PY'
+    import json
+    import os
+    import pathlib
+    import shutil
+    import sys
+    import tempfile
+
+    path = pathlib.Path(sys.argv[1])
+    original = path.read_text() if path.exists() else ""
+    try:
+        document = json.loads(original) if original else {}
+    except json.JSONDecodeError:
+        document = {}
+    if not isinstance(document, dict):
+        document = {}
+    document["theme"] = "JARVIS Nord"
+    updated = json.dumps(document, indent=2, ensure_ascii=False) + "\n"
+    if updated != original:
+        path.parent.mkdir(parents=True, exist_ok=True)
+        backup = path.with_name("settings.json.before-managed-theme")
+        if path.exists() and not backup.exists():
+            shutil.copy2(path, backup)
+        fd, temporary = tempfile.mkstemp(dir=path.parent, prefix=".settings-theme-")
+        try:
+            with os.fdopen(fd, "w") as output:
+                output.write(updated)
+            os.replace(temporary, path)
+        finally:
+            if os.path.exists(temporary):
+                os.unlink(temporary)
+    PY
+  '';
+
   # Same file `herdr integration install pi` writes; pinning the asset from
   # the herdr flake keeps it declarative and in lockstep with the binary.
   home.file.".pi/agent/extensions/herdr-agent-state.ts".source = herdrPiExtension;
