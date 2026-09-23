@@ -34,7 +34,15 @@ stdenvNoCC.mkDerivation rec {
 
     # The executable locates its assets through /proc/self/exe, which resolves
     # to the loader instead. PI_PACKAGE_DIR is upstream's escape hatch for it.
-    makeWrapper ${stdenv.cc.bintools.dynamicLinker} $out/bin/pi \
+    #
+    # The loader is started through a symlink named `pi` because the kernel
+    # takes the process name from the executed file's basename. Without it the
+    # process shows up as `ld-linux-x86-64`, and firstmate cannot find its own
+    # Pi session in the process tree, so it refuses the session lock and starts
+    # read-only.
+    mkdir -p $out/libexec/pi
+    ln -s ${stdenv.cc.bintools.dynamicLinker} $out/libexec/pi/pi
+    makeWrapper $out/libexec/pi/pi $out/bin/pi \
       --add-flags $out/lib/pi/pi \
       --set PI_PACKAGE_DIR $out/lib/pi
 
