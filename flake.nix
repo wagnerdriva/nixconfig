@@ -8,8 +8,6 @@
 
     herdr.url = "github:herdrdev/herdr";
 
-    hermes.url = "github:NousResearch/hermes-agent";
-
     home-manager = {
       url = "github:nix-community/home-manager/release-26.05";
       inputs.nixpkgs.follows = "nixpkgs";
@@ -31,7 +29,7 @@
 
   };
 
-  outputs = { nixpkgs, home-manager, disko, niri-flake, ai-memory, dms, herdr, hermes, ... }:
+  outputs = { nixpkgs, home-manager, disko, niri-flake, ai-memory, dms, herdr, ... }:
     let
       system = "x86_64-linux";
       primaryUser = "wagner";
@@ -61,7 +59,6 @@
                     ai-memory.packages.${system}.default;
                   herdrPackage = herdr.packages.${system}.default;
                   herdrPiExtension = "${herdr}/src/integration/assets/pi/herdr-agent-state.ts";
-                  inherit hermes;
                   queryOnPackage = null;
                   inherit minimalAgentSetup;
                   inherit dms;
