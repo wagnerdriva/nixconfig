@@ -411,6 +411,14 @@ in
 
     herdrPackage
     pi-driva
+
+    # firstmate (~/firstmate) refuses to dispatch without these. Its own
+    # installers use brew, npm -g and curl | sh, none of which fit NixOS.
+    # tmux, no-mistakes, chrome-devtools-axi and lavish-axi are left out.
+    (callPackage ../../packages/axi-tools { })
+    (callPackage ../../packages/treehouse.nix { })
+    jq
+    nodejs_22
   ] ++ lib.optionals (!minimalAgentSetup) [
     (callPackage ../../packages/chatgpt.nix { codexCli = codex-driva; })
     aiMemoryPackage
@@ -419,7 +427,6 @@ in
     orca-ide
 
     # Base useful for local development and agent tools.
-    nodejs_22
     pnpm
     python3
     gcc
@@ -427,7 +434,6 @@ in
     pkg-config
     git-lfs
     google-cloud-sdk
-    jq
     ripgrep
     fd
   ];

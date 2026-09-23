@@ -1,0 +1,10 @@
+{
+  "name": "firstmate-axi-tools",
+  "version": "1.0.0",
+  "private": true,
+  "dependencies": {
+    "gh-axi": "0.1.35",
+    "tasks-axi": "0.2.6",
+    "quota-axi": "0.1.51"
+  }
+}
