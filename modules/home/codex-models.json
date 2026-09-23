@@ -826,8 +826,8 @@
       "node_repl_disabled": false
     },
     {
-      "slug": "claude-opus-5",
-      "display_name": "Claude Opus 5",
+      "slug": "claude-opus-5-5",
+      "display_name": "Claude Opus 5.5",
       "description": "Latest premium model combining maximum intelligence with practical performance",
       "default_reasoning_level": "medium",
       "supported_reasoning_levels": [

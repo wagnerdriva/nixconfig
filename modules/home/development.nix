@@ -106,7 +106,7 @@ let
   # native Anthropic Messages. Same prefix ANTHROPIC_DEFAULT_*_MODEL already uses.
   drivaMessagesModels = map mkDrivaModel [
     { id = "claude/claude-fable-5-1"; name = "Claude Fable 5.1"; contextWindow = 1000000; }
-    { id = "claude/claude-opus-5"; name = "Claude Opus 5"; contextWindow = 1000000; }
+    { id = "claude/claude-opus-5-5"; name = "Claude Opus 5.5"; contextWindow = 1000000; }
     { id = "claude/claude-sonnet-5"; name = "Claude Sonnet 5"; contextWindow = 1000000; }
   ];
 
@@ -441,7 +441,7 @@ in
   home.sessionVariables = {
     ANTHROPIC_BASE_URL = drivaProxyUrl;
   } // lib.optionalAttrs (!minimalAgentSetup) {
-    ANTHROPIC_DEFAULT_OPUS_MODEL = "claude/claude-opus-5";
+    ANTHROPIC_DEFAULT_OPUS_MODEL = "claude/claude-opus-5-5";
     ANTHROPIC_DEFAULT_SONNET_MODEL = "claude/claude-sonnet-5";
     ANTHROPIC_DEFAULT_HAIKU_MODEL = "claude/claude-haiku-4-5-20251001";
     ANTHROPIC_DEFAULT_FABLE_MODEL = "claude/claude-fable-5-1";
