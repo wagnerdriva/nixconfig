@@ -3,7 +3,7 @@ let
   drivaProxyUrl = "http://vpn-driva.netbird.driva.io:8317";
   proxyKeyFile = "$HOME/.config/driva/proxy-key";
 
-  codexVersion = "0.154.0";
+  codexVersion = "0.156.1";
   enablePi = hostName != "ryzen";
 
   # Fable's unqualified alias routes to an unavailable upstream. On Ryzen,
@@ -28,11 +28,11 @@ let
     srcs = [
       (pkgs.fetchurl {
         url = "https://github.com/openai/codex/releases/download/rust-v${codexVersion}/codex-x86_64-unknown-linux-musl.tar.gz";
-        hash = "sha256-1+GLJZeujyQvXzHunpDe70jbye3WNNmGj7ZDXQjAfwI=";
+        hash = "sha256-r/RlOag6/4bjxixZK84sUNlTkfnfKJr68DpQwB0UUz0=";
       })
       (pkgs.fetchurl {
         url = "https://github.com/openai/codex/releases/download/rust-v${codexVersion}/codex-code-mode-host-x86_64-unknown-linux-musl.tar.gz";
-        hash = "sha256-po33zKI8bafN4XVnfffeYcc6I0rdEzOhJUuG1kGvAfc=";
+        hash = "sha256-qSnaqfagvdwAwMnmQC3xF7ElrNlvnVVPbJnDLH5mxgg=";
       })
     ];
     sourceRoot = ".";
@@ -137,8 +137,19 @@ let
     exec ${pkgs.coreutils}/bin/cat "$key_file"
   '';
 
+  codex-updater = pkgs.writeShellApplication {
+    name = "codex-nix-update";
+    runtimeInputs = with pkgs; [ curl jq nix python3 coreutils gnused ];
+    text = builtins.readFile ../../scripts/update-codex;
+  };
+
   codex-driva = pkgs.writeShellScriptBin "codex" ''
     set -eu
+    if [ "''${1:-}" = update ]; then
+      shift
+      exec ${codex-updater}/bin/codex-nix-update ${lib.escapeShellArg codexVersion} "$@"
+    fi
+
     DRIVA_PROXY_API_KEY="$(${driva-proxy-token}/bin/driva-proxy-token)"
     export DRIVA_PROXY_API_KEY
 
@@ -176,6 +187,11 @@ let
   '';
 
   codex-openai = pkgs.writeShellScriptBin "codex-openai" ''
+    if [ "''${1:-}" = update ]; then
+      shift
+      exec ${codex-updater}/bin/codex-nix-update ${lib.escapeShellArg codexVersion} "$@"
+    fi
+
     exec ${codex-package}/bin/codex \
       -c 'model_provider="openai"' \
       -c 'tui.theme="nord"' \
