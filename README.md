@@ -113,6 +113,15 @@ O perfil Ryzen mantém a mesma configuração visual, mas deixa o Niri detectar
 automaticamente os monitores conectados. `minimalAgentSetup` reduz apenas as
 ferramentas de agentes e não remove o tema, o terminal, o DMS ou os wallpapers.
 
+No Ryzen, o Codex substitui o Pi. Execute `codex` e use `/model` para escolher
+entre os modelos GPT, Claude, GLM e Kimi do proxy Driva. A chave continua em
+`~/.config/driva/proxy-key`, fora do Git e do Nix Store; a VPN precisa estar
+conectada. O Fable usa o identificador `claude/claude-fable-5-1` para selecionar
+a rota correta do proxy. `codex-openai` continua disponível para acesso direto
+à OpenAI, com autenticação própria. O rebuild remove o Pi e seus arquivos
+declarativos apenas do Ryzen, preservando as sessões e os demais dados locais
+em `~/.pi`. A instalação do Pi no Precision não muda.
+
 O `ai-memory` registra o próprio MCP e os próprios hooks escrevendo direto em
 `~/.codex`, fora do controle do Nix. Ligar `minimalAgentSetup` em um host que já
 rodou o perfil completo remove o pacote e o serviço, mas deixa para trás

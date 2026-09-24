@@ -1,9 +1,24 @@
-{ config, lib, pkgs, aiMemoryPackage ? null, herdrPackage, herdrPiExtension, minimalAgentSetup, ... }:
+{ config, lib, pkgs, aiMemoryPackage ? null, herdrPackage, herdrPiExtension, minimalAgentSetup, hostName, ... }:
 let
   drivaProxyUrl = "http://vpn-driva.netbird.driva.io:8317";
   proxyKeyFile = "$HOME/.config/driva/proxy-key";
 
   codexVersion = "0.154.0";
+  enablePi = hostName != "ryzen";
+
+  # Fable's unqualified alias routes to an unavailable upstream. On Ryzen,
+  # use the same explicit Claude namespace as Pi, also accepted by Responses.
+  codexCatalog = if hostName != "ryzen" then ./codex-models.json else
+    pkgs.writeText "codex-ryzen-models.json" (builtins.toJSON (
+      let catalog = builtins.fromJSON (builtins.readFile ./codex-models.json);
+      in catalog // {
+        models = map (model:
+          if model.slug == "claude-fable-5-1" then
+            model // { slug = "claude/claude-fable-5-1"; }
+          else model
+        ) catalog.models;
+      }
+    ));
 
   codex-package = pkgs.stdenvNoCC.mkDerivation {
     pname = "codex";
@@ -130,7 +145,7 @@ let
     exec ${codex-package}/bin/codex \
       -c 'model_provider="driva_proxy"' \
       -c 'tui.theme="nord"' \
-      -c 'model_catalog_json="${./codex-models.json}"' \
+      -c 'model_catalog_json="${codexCatalog}"' \
       -c 'service_tier="fast"' \
       -c 'check_for_update_on_startup=false' \
       -c 'model_providers.driva_proxy.name="Driva VPN model proxy"' \
@@ -170,6 +185,7 @@ let
   codexProxySettings = pkgs.writeText "codex-proxy-settings.json" (builtins.toJSON {
     model_provider = "driva_proxy";
     tui.theme = "nord";
+    check_for_update_on_startup = false;
     model_providers.driva_proxy = {
       name = "Driva VPN model proxy";
       base_url = "${drivaProxyUrl}/v1";
@@ -185,8 +201,7 @@ in
 
   # Desktop conversations reload the user config, so CLI overrides alone do not
   # reliably select the provider. Preserve the app's other mutable settings.
-  home.activation.codexProxy = lib.mkIf (!minimalAgentSetup)
-    (lib.hm.dag.entryAfter [ "writeBoundary" ] ''
+  home.activation.codexProxy = lib.hm.dag.entryAfter [ "writeBoundary" ] ''
     run ${pkgs.python3.withPackages (ps: [ ps.tomlkit ])}/bin/python \
       - "${config.home.homeDirectory}/.codex/config.toml" ${codexProxySettings} <<'PY'
     import json, os, pathlib, shutil, sys, tempfile
@@ -196,7 +211,9 @@ in
     desired = json.loads(pathlib.Path(sys.argv[2]).read_text())
     original = path.read_text() if path.exists() else ""
     document = tomlkit.parse(original)
-    document["model_provider"] = desired["model_provider"]
+    for key in ("model_provider", "check_for_update_on_startup"):
+        document[key] = desired[key]
+    document.setdefault("model", "gpt-5.6-sol")
     providers = document.setdefault("model_providers", tomlkit.table())
     providers["driva_proxy"] = desired["model_providers"]["driva_proxy"]
     tui = document.setdefault("tui", tomlkit.table())
@@ -216,33 +233,37 @@ in
             if os.path.exists(temporary):
                 os.unlink(temporary)
     PY
-  '');
+  '';
 
   # pi reads this file every time the model picker opens, so the proxy catalog
   # stays declarative. The key itself is resolved by the wrapper, not stored.
-  home.file.".pi/agent/models.json".text = builtins.toJSON {
-    providers = {
-      driva = {
-        baseUrl = "${drivaProxyUrl}/v1";
-        api = "openai-responses";
-        apiKey = "$DRIVA_PROXY_API_KEY";
-        models = drivaResponsesModels;
-      };
-      driva-claude = {
-        baseUrl = drivaProxyUrl;
-        api = "anthropic-messages";
-        apiKey = "$DRIVA_PROXY_API_KEY";
-        models = drivaMessagesModels;
+  home.file.".pi/agent/models.json" = lib.mkIf enablePi {
+    text = builtins.toJSON {
+      providers = {
+        driva = {
+          baseUrl = "${drivaProxyUrl}/v1";
+          api = "openai-responses";
+          apiKey = "$DRIVA_PROXY_API_KEY";
+          models = drivaResponsesModels;
+        };
+        driva-claude = {
+          baseUrl = drivaProxyUrl;
+          api = "anthropic-messages";
+          apiKey = "$DRIVA_PROXY_API_KEY";
+          models = drivaMessagesModels;
+        };
       };
     };
   };
 
   # Keep Pi's custom Nord theme declarative. Pi hot-reloads the active theme
   # when this file changes.
-  home.file.".pi/agent/themes/jarvis-nord.json".source = ./pi-themes/jarvis-nord.json;
+  home.file.".pi/agent/themes/jarvis-nord.json" = lib.mkIf enablePi {
+    source = ./pi-themes/jarvis-nord.json;
+  };
 
   # Preserve Pi settings while keeping the selected theme managed.
-  home.activation.piTheme = lib.hm.dag.entryAfter [ "writeBoundary" ] ''
+  home.activation.piTheme = lib.mkIf enablePi (lib.hm.dag.entryAfter [ "writeBoundary" ] ''
     run ${pkgs.python3}/bin/python - "${config.home.homeDirectory}/.pi/agent/settings.json" <<'PY'
     import json
     import os
@@ -275,11 +296,13 @@ in
             if os.path.exists(temporary):
                 os.unlink(temporary)
     PY
-  '';
+  '');
 
   # Same file `herdr integration install pi` writes; pinning the asset from
   # the herdr flake keeps it declarative and in lockstep with the binary.
-  home.file.".pi/agent/extensions/herdr-agent-state.ts".source = herdrPiExtension;
+  home.file.".pi/agent/extensions/herdr-agent-state.ts" = lib.mkIf enablePi {
+    source = herdrPiExtension;
+  };
 
   home.file.".claude/themes/nord.json".text = builtins.toJSON {
     name = "Nord";
@@ -410,7 +433,6 @@ in
     gh
 
     herdrPackage
-    pi-driva
 
     # firstmate (~/firstmate) refuses to dispatch without these. Its own
     # installers use brew, npm -g and curl | sh, none of which fit NixOS.
@@ -419,7 +441,7 @@ in
     (callPackage ../../packages/treehouse.nix { })
     jq
     nodejs_22
-  ] ++ lib.optionals (!minimalAgentSetup) [
+  ] ++ lib.optional enablePi pi-driva ++ lib.optionals (!minimalAgentSetup) [
     (callPackage ../../packages/chatgpt.nix { codexCli = codex-driva; })
     aiMemoryPackage
     btop
