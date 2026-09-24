@@ -1,22 +1,31 @@
 # nixos-config
 
-Configuração declarativa do Dell Precision 5530 de Wagner, construída a partir
+Configuração declarativa das máquinas de Wagner, construída a partir
 das ideias do [`ramosrafh/nixconfig`](https://github.com/ramosrafh/nixconfig),
 sem carregar os usuários, pacotes locais ou ajustes de hardware daquele
 repositório.
 
-## Máquina
+## Máquinas
 
-- Dell Precision 5530;
+O notebook principal é o ASUS Zenbook 14 OLED UX3402ZA (`zenbook`):
+
+- Intel Core i7-1260P, 16 GiB de RAM e Intel Iris Xe;
+- tela OLED 2880x1800, usada com escala 1,75;
+- NVMe Intel SSD 670p de 1 TB em `/dev/nvme0n1`.
+
+O Dell Precision 5530 (`precision`) é o notebook anterior:
+
 - Intel Core i7-8850H, 32 GiB de RAM;
 - Intel UHD 630 como GPU principal;
 - NVIDIA Quadro P2000 sob demanda com `nvidia-offload`;
-- NVMe SK hynix PC401 de 1 TB em `/dev/nvme0n1`;
-- NixOS 26.05, Niri e Home Manager.
+- NVMe SK hynix PC401 de 1 TB em `/dev/nvme0n1`.
+
+Todos usam NixOS 26.05, Niri e Home Manager.
 
 ## Como ler esta configuração
 
-`flake.nix` fixa as dependências e monta as configurações `precision` e `ryzen`.
+`flake.nix` fixa as dependências e monta as configurações `zenbook`, `precision`
+e `ryzen`.
 Os módulos em `hosts/` contêm o que depende de cada máquina. `modules/nixos`
 descreve o sistema compartilhável e `modules/home` descreve a sessão gráfica e
 as preferências do usuário `wagner`.
@@ -70,14 +79,16 @@ O instalador apaga o NVMe inteiro e cria:
 - zram, sem swap em disco e sem hibernação nesta primeira versão.
 
 O script destrutivo não deve ser executado antes da revisão descrita em
-[`install.md`](install.md).
+[`install.md`](install.md). A política de energia que alterna entre
+`performance` na tomada e `power-saver` na bateria fica em
+`modules/nixos/laptop-power.nix` e é importada pelos notebooks.
 
 ## Comandos depois da instalação
 
 Aplicar uma alteração:
 
 ```bash
-sudo nixos-rebuild switch --flake ~/nixos-config#precision
+sudo nixos-rebuild switch --flake ~/nixos-config#zenbook
 ```
 
 Para atualizar o Pi, altere `version` e `hash` em
@@ -86,7 +97,7 @@ Para atualizar o Pi, altere `version` e `hash` em
 
 ```bash
 nix flake check
-sudo nixos-rebuild switch --flake ~/nixos-config#precision
+sudo nixos-rebuild switch --flake ~/nixos-config#zenbook
 ```
 
 O `pi update` não altera essa instalação porque o executável vem do Nix Store;
@@ -121,10 +132,10 @@ systemctl --user restart dms.service
 Testar a avaliação sem trocar o sistema atual:
 
 ```bash
-sudo nixos-rebuild dry-build --flake ~/nixos-config#precision
+sudo nixos-rebuild dry-build --flake ~/nixos-config#zenbook
 ```
 
-Rodar um programa com a Quadro P2000:
+Rodar um programa com a Quadro P2000 no Precision:
 
 ```bash
 nvidia-offload programa

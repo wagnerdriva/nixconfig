@@ -1,9 +1,33 @@
-# Instalação limpa do Precision 5530
+# Instalação limpa
+
+## Zenbook UX3402ZA
+
+O procedimento apaga por completo o Intel SSD 670p de 1 TB em `/dev/nvme0n1`.
+Inicie o ISO do NixOS 26.05 em modo UEFI, com Secure Boot desabilitado, e
+conecte-o à internet. Não abra as partições do NVMe pelo gerenciador de
+arquivos.
+
+Os pacotes compilados localmente (niri, codex, herdr, ai-memory e DMS) não
+estão no cache público. Se outra máquina já tiver o closure do `zenbook`,
+copie para o store do live USB os caminhos ausentes de `cache.nixos.org`
+antes de instalar: o `nixos-install` usa o store do live como substituto e
+evita compilar tudo em RAM.
+
+No terminal do live USB:
+
+```bash
+git clone https://github.com/wagnerdriva/nixconfig.git /tmp/n && cd /tmp/n && sudo bash scripts/install-zenbook /dev/nvme0n1
+```
+
+O script confere o modelo do SSD e a GPU Intel, pede a confirmação textual
+`APAGAR /dev/nvme0n1`, a senha LUKS e a senha do usuário `wagner`.
+
+## Precision 5530
 
 > **Não execute ainda.** O procedimento abaixo apaga por completo o SK hynix
 > PC401 de 1 TB em `/dev/nvme0n1`.
 
-## Antes de apagar
+### Antes de apagar
 
 1. Faça backup de qualquer arquivo necessário.
 2. No firmware Dell, use UEFI. Desabilite Secure Boot temporariamente, sem
@@ -33,7 +57,7 @@ lsblk -o NAME,PATH,SIZE,MODEL,TYPE
 
 O alvo esperado é `/dev/nvme0n1`, modelo PC401, com aproximadamente 954 GiB.
 
-## Instalação
+### Instalação
 
 No live USB, abra um terminal e execute:
 

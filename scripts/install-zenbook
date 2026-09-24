@@ -1,0 +1,76 @@
+#!/usr/bin/env bash
+
+set -euo pipefail
+
+export NIX_CONFIG="${NIX_CONFIG:-}
+experimental-features = nix-command flakes"
+# All flake inputs used by this installer are public. Do not let stale
+# credentials from the live session turn a public fetch into an auth prompt.
+export GIT_CONFIG_GLOBAL=/dev/null
+export GIT_TERMINAL_PROMPT=0
+
+die() {
+  echo "Erro: $*" >&2
+  exit 1
+}
+
+[[ ${EUID} -eq 0 ]] || die "execute como root"
+[[ $# -eq 1 ]] || die "uso: bash scripts/install-zenbook /dev/nvme0n1"
+[[ -d /sys/firmware/efi/efivars ]] || die "o live USB não iniciou em modo UEFI"
+
+DISK=$1
+EXPECTED_DISK=/dev/nvme0n1
+SCRIPT_DIR=$(cd -- "$(dirname -- "${BASH_SOURCE[0]}")" && pwd)
+REPO=$(realpath "$SCRIPT_DIR/..")
+INSTALL_USER=wagner
+
+[[ -b "$DISK" ]] || die "disco inexistente: $DISK"
+REAL_DISK=$(readlink -f "$DISK")
+[[ $(lsblk -dn -o TYPE "$REAL_DISK") == "disk" ]] || \
+  die "$DISK não representa um disco inteiro"
+[[ "$REAL_DISK" == "$EXPECTED_DISK" ]] || \
+  die "esta configuração foi revisada somente para $EXPECTED_DISK"
+
+MODEL=$(lsblk -dn -o MODEL "$REAL_DISK")
+[[ "$MODEL" == *"SSDPEKNU010TZ"* ]] || \
+  die "modelo inesperado: $MODEL (esperado: Intel SSD 670p SSDPEKNU010TZ)"
+
+MOUNTED_TARGET=$(lsblk -nr -o MOUNTPOINTS "$REAL_DISK" | sed '/^[[:space:]]*$/d')
+[[ -z "$MOUNTED_TARGET" ]] || \
+  die "há partições de $REAL_DISK montadas; não abra o NVMe no gerenciador de arquivos"
+
+GPU_LIST=$(lspci -D | grep -E 'VGA|3D|Display' || true)
+grep -Eq '^0000:00:02\.0 .*Intel.*Alder Lake' <<< "$GPU_LIST" || \
+  die "GPU Intel Alder Lake não encontrada; reveja o hardware antes de continuar"
+
+mountpoint -q /mnt && die "/mnt já está montado; reinicie o live USB antes de tentar novamente"
+cryptsetup status cryptroot >/dev/null 2>&1 && \
+  die "o volume cryptroot já está aberto; reinicie o live USB antes de tentar novamente"
+
+echo "Disco selecionado:"
+lsblk -o NAME,PATH,SIZE,MODEL,TYPE,FSTYPE,MOUNTPOINTS "$REAL_DISK"
+echo
+echo "GPU detectada:"
+echo "$GPU_LIST"
+echo
+echo "ATENÇÃO: todos os dados de $REAL_DISK serão apagados."
+read -r -p "Digite APAGAR $REAL_DISK para continuar: " CONFIRM
+[[ "$CONFIRM" == "APAGAR $REAL_DISK" ]] || die "confirmação incorreta"
+
+echo "Criando GPT, LUKS2 e Btrfs..."
+nix run "$REPO#disko" -- --mode disko --flake "$REPO#zenbook"
+
+mkdir -p "/mnt/home/$INSTALL_USER/nixos-config"
+cp -a "$REPO"/. "/mnt/home/$INSTALL_USER/nixos-config/"
+
+echo "Instalando o NixOS..."
+nixos-install --flake "$REPO#zenbook" --no-root-passwd
+
+echo "Defina agora a senha do usuário $INSTALL_USER."
+nixos-enter --root /mnt -c "passwd '$INSTALL_USER'"
+nixos-enter --root /mnt -c \
+  "chown -R '$INSTALL_USER':users '/home/$INSTALL_USER/nixos-config'"
+
+sync
+echo
+echo "Instalação concluída. Reinicie e retire o live USB."

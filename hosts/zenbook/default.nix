@@ -2,7 +2,6 @@
   imports = [
     ./hardware.nix
     ./disko.nix
-    ./nvidia.nix
     ../../modules/nixos/snapshots.nix
     ../../modules/nixos/base.nix
     ../../modules/nixos/desktop.nix
@@ -13,13 +12,11 @@
     ../../modules/nixos/zerotier.nix
   ];
 
-  networking.hostName = "precision";
+  networking.hostName = "zenbook";
   system.stateVersion = "26.05";
 
   boot.loader.timeout = 3;
 
-  # The Precision 5530 is an Intel laptop; keep the integrated GPU as the
-  # default and invoke the Quadro explicitly through nvidia-offload.
   environment.sessionVariables = {
     LIBVA_DRIVER_NAME = "iHD";
     NIXOS_OZONE_WL = "1";

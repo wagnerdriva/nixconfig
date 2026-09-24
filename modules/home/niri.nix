@@ -1,25 +1,30 @@
-{ hostName, lib, ... }:
+{ hostName, ... }:
 let
   colors = import ./colors.nix;
 in {
   programs.niri.settings = {
     # These connector names and positions belong to the Precision dock setup.
-    # The Ryzen desktop auto-detects its connected outputs instead of
-    # inheriting laptop-specific names that may not exist there.
-    outputs = lib.mkIf (hostName == "precision") {
-      "DP-3" = {
-        scale = 1;
-        position = { x = 0; y = 0; };
+    # Kanshi places the Zenbook next to the same monitors by their EDID, so
+    # niri only needs its panel scale to avoid a flash at the wrong size. The
+    # Ryzen desktop auto-detects its connected outputs instead of inheriting
+    # laptop-specific names that may not exist there.
+    outputs = {
+      precision = {
+        "DP-3" = {
+          scale = 1;
+          position = { x = 0; y = 0; };
+        };
+        "DP-1" = {
+          scale = 1;
+          position = { x = 1920; y = 0; };
+        };
+        "eDP-1" = {
+          scale = 2.25;
+          position = { x = 1067; y = 1080; };
+        };
       };
-      "DP-1" = {
-        scale = 1;
-        position = { x = 1920; y = 0; };
-      };
-      "eDP-1" = {
-        scale = 2.25;
-        position = { x = 1067; y = 1080; };
-      };
-    };
+      zenbook."eDP-1".scale = 1.75;
+    }.${hostName} or { };
 
     input = {
       power-key-handling.enable = false;

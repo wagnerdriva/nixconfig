@@ -1,5 +1,5 @@
 {
-  description = "NixOS configuration for Wagner's Dell Precision 5530";
+  description = "NixOS configuration for Wagner's machines";
 
   inputs = {
     nixpkgs.url = "github:NixOS/nixpkgs/nixos-26.05";
@@ -72,6 +72,10 @@
         precision = mkConfiguration {
           host = ./hosts/precision;
           hostName = "precision";
+        };
+        zenbook = mkConfiguration {
+          host = ./hosts/zenbook;
+          hostName = "zenbook";
         };
         ryzen = mkConfiguration {
           host = ./hosts/ryzen;
