@@ -35,10 +35,14 @@ in {
         dwt = true;
         natural-scroll = false;
       };
-      keyboard.xkb = {
-        layout = "us";
-        variant = "intl";
-      };
+      # The Zenbook has an ABNT2 keyboard; the other hosts use US keyboards.
+      keyboard.xkb =
+        if hostName == "zenbook" then {
+          layout = "br";
+        } else {
+          layout = "us";
+          variant = "intl";
+        };
     };
 
     layout = {

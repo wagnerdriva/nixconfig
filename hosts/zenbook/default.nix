@@ -17,6 +17,10 @@
 
   boot.loader.timeout = 3;
 
+  # The built-in keyboard is ABNT2. The systemd initrd also applies this
+  # keymap to the LUKS passphrase prompt.
+  console.keyMap = "br-abnt2";
+
   environment.sessionVariables = {
     LIBVA_DRIVER_NAME = "iHD";
     NIXOS_OZONE_WL = "1";

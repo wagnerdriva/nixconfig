@@ -1,4 +1,4 @@
-{ pkgs, primaryUser, ... }:
+{ lib, pkgs, primaryUser, ... }:
 {
   nix = {
     settings = {
@@ -29,7 +29,7 @@
 
   time.timeZone = "America/Sao_Paulo";
   i18n.defaultLocale = "pt_BR.UTF-8";
-  console.keyMap = "us";
+  console.keyMap = lib.mkDefault "us";
 
   hardware.enableRedistributableFirmware = true;
   hardware.bluetooth = {
