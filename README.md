@@ -52,10 +52,11 @@ inicie uma conversa nova ou crie uma cópia do histórico com o provedor desejad
 O wrapper respeita o modelo e o nível de raciocínio salvos no Codex. A chave é
 lida antes de iniciar o cliente e fornecida por `env_key`, evitando executar
 um comando de autenticação durante a atualização do catálogo de modelos.
-`codex update` (ou `codex-openai update`) consulta a última release estável,
-atualiza a versão e os dois hashes em `modules/home/development.nix` e executa
-`sudo nixos-rebuild switch` para o host atual. O comando pede a senha do `sudo`
-quando necessário; depois, registre a nova versão no Git.
+`codex update` (ou `codex-openai update`) baixa a última release estável para
+`~/.local/share/codex-cli` e a ativa sem `sudo` ou rebuild. O Nix mantém a
+versão empacotada como reserva, usada antes da primeira atualização local.
+Depois de alterar este wrapper, aplique a configuração do host uma vez com
+`sudo nixos-rebuild switch --flake ~/nixos-config#ryzen`.
 Para Claude Code, há também os aliases `claude-max`, `claude-codex` e
 `claude-glm`. O tema Nord desses clientes é persistido pelo Home Manager.
 

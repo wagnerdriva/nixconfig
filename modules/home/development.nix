@@ -138,8 +138,8 @@ let
   '';
 
   codex-updater = pkgs.writeShellApplication {
-    name = "codex-nix-update";
-    runtimeInputs = with pkgs; [ curl jq nix python3 coreutils gnused ];
+    name = "codex-local-update";
+    runtimeInputs = with pkgs; [ curl jq coreutils gnutar gzip util-linux ];
     text = builtins.readFile ../../scripts/update-codex;
   };
 
@@ -147,13 +147,19 @@ let
     set -eu
     if [ "''${1:-}" = update ]; then
       shift
-      exec ${codex-updater}/bin/codex-nix-update ${lib.escapeShellArg codexVersion} "$@"
+      exec ${codex-updater}/bin/codex-local-update ${lib.escapeShellArg codexVersion} "$@"
     fi
+
+    codex_binary="${config.home.homeDirectory}/.local/share/codex-cli/current/codex"
+    if [ ! -x "$codex_binary" ]; then
+      codex_binary="${codex-package}/bin/codex"
+    fi
+    export PATH="${lib.makeBinPath [ pkgs.ripgrep pkgs.bubblewrap ]}:$PATH"
 
     DRIVA_PROXY_API_KEY="$(${driva-proxy-token}/bin/driva-proxy-token)"
     export DRIVA_PROXY_API_KEY
 
-    exec ${codex-package}/bin/codex \
+    exec "$codex_binary" \
       -c 'model_provider="driva_proxy"' \
       -c 'tui.theme="nord"' \
       -c 'model_catalog_json="${codexCatalog}"' \
@@ -189,10 +195,16 @@ let
   codex-openai = pkgs.writeShellScriptBin "codex-openai" ''
     if [ "''${1:-}" = update ]; then
       shift
-      exec ${codex-updater}/bin/codex-nix-update ${lib.escapeShellArg codexVersion} "$@"
+      exec ${codex-updater}/bin/codex-local-update ${lib.escapeShellArg codexVersion} "$@"
     fi
 
-    exec ${codex-package}/bin/codex \
+    codex_binary="${config.home.homeDirectory}/.local/share/codex-cli/current/codex"
+    if [ ! -x "$codex_binary" ]; then
+      codex_binary="${codex-package}/bin/codex"
+    fi
+    export PATH="${lib.makeBinPath [ pkgs.ripgrep pkgs.bubblewrap ]}:$PATH"
+
+    exec "$codex_binary" \
       -c 'model_provider="openai"' \
       -c 'tui.theme="nord"' \
       "$@"

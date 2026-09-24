@@ -1,12 +1,12 @@
 #!/usr/bin/env bash
 set -euo pipefail
 
-running_version=${1:?missing installed Codex version}
+fallback_version=${1:?missing packaged Codex version}
 shift
 
 if [[ ${1:-} == --help || ${1:-} == -h ]]; then
   echo 'Usage: codex update'
-  echo 'Update the Nix pin and apply the current NixOS host configuration.'
+  echo 'Install the latest stable Codex CLI in ~/.local/share/codex-cli.'
   exit 0
 fi
 if (( $# != 0 )); then
@@ -14,94 +14,91 @@ if (( $# != 0 )); then
   exit 2
 fi
 
-repo=${CODEX_NIXOS_CONFIG:-$HOME/nixos-config}
-host=${CODEX_NIXOS_HOST:-$(hostname)}
-module=$repo/modules/home/development.nix
+root=${CODEX_LOCAL_ROOT:-$HOME/.local/share/codex-cli}
+mkdir -p "$root/versions"
+exec 9>"$root/.update.lock"
+flock -x 9
 
-if [[ ! -f $module ]]; then
-  echo "Codex Nix configuration not found: $module" >&2
+installed_version=$fallback_version
+if [[ -e $root/current || -L $root/current ]]; then
+  if [[ ! -x $root/current/codex || ! -x $root/current/codex-code-mode-host ||
+        ! -f $root/current/version ]]; then
+    echo "Incomplete Codex installation at $root/current" >&2
+    exit 1
+  fi
+  installed_version=$(<"$root/current/version")
+fi
+if [[ ! $installed_version =~ ^[0-9]+\.[0-9]+\.[0-9]+$ ]]; then
+  echo "Invalid installed Codex version: $installed_version" >&2
   exit 1
 fi
-if [[ ! -e $repo/hosts/$host ]]; then
-  echo "Unknown NixOS host '$host' in $repo" >&2
-  exit 1
-fi
 
-current=$(sed -nE 's/^  codexVersion = "([0-9]+\.[0-9]+\.[0-9]+)";$/\1/p' "$module")
-if [[ ! $current =~ ^[0-9]+\.[0-9]+\.[0-9]+$ ]]; then
-  echo "Could not read the Codex version from $module" >&2
-  exit 1
-fi
-
-release=$(curl --fail --silent --show-error --location --retry 3 \
-  https://api.github.com/repos/openai/codex/releases/latest | jq -er '.tag_name')
+release_json=$(curl --fail --silent --show-error --location --retry 3 \
+  https://api.github.com/repos/openai/codex/releases/latest)
+release=$(jq -er '.tag_name' <<< "$release_json")
 if [[ ! $release =~ ^rust-v([0-9]+\.[0-9]+\.[0-9]+)$ ]]; then
   echo "Unexpected Codex release tag: $release" >&2
   exit 1
 fi
 latest=${BASH_REMATCH[1]}
 
-if [[ $(printf '%s\n' "$current" "$latest" | sort -V | tail -n 1) != "$latest" ]]; then
-  echo "Pinned Codex $current is newer than published release $latest; leaving it unchanged." >&2
-  exit 1
-fi
-
-pin_changed=false
-if [[ $current != "$latest" ]]; then
-  echo "Updating Codex pin from $current to $latest..."
-  base=https://github.com/openai/codex/releases/download/$release
-  cli_hash=$(nix store prefetch-file --json \
-    "$base/codex-x86_64-unknown-linux-musl.tar.gz" | jq -er '.hash')
-  host_hash=$(nix store prefetch-file --json \
-    "$base/codex-code-mode-host-x86_64-unknown-linux-musl.tar.gz" | jq -er '.hash')
-  if [[ ! $cli_hash =~ ^sha256-[A-Za-z0-9+/=]+$ || ! $host_hash =~ ^sha256-[A-Za-z0-9+/=]+$ ]]; then
-    echo 'Received an invalid archive hash from Nix' >&2
-    exit 1
-  fi
-
-  python3 - "$module" "$current" "$latest" "$cli_hash" "$host_hash" <<'PY'
-import os
-import pathlib
-import re
-import sys
-import tempfile
-
-path = pathlib.Path(sys.argv[1])
-old_version, new_version, cli_hash, host_hash = sys.argv[2:]
-content = path.read_text()
-version_line = f'  codexVersion = "{old_version}";'
-if content.count(version_line) != 1:
-    raise SystemExit('Codex version changed while updating; retry the command')
-
-start = content.index('  codex-package = ')
-end = content.index('\n  orca-app = ', start)
-package = content[start:end]
-hashes = list(re.finditer(r'(?m)^        hash = "[^"]+";$', package))
-if len(hashes) != 2:
-    raise SystemExit('Expected exactly two Codex archive hashes')
-for match, value in reversed(list(zip(hashes, (cli_hash, host_hash)))):
-    package = package[:match.start()] + f'        hash = "{value}";' + package[match.end():]
-
-updated = content[:start] + package + content[end:]
-updated = updated.replace(version_line, f'  codexVersion = "{new_version}";', 1)
-with tempfile.NamedTemporaryFile(mode='w', dir=path.parent, delete=False) as temp:
-    temp.write(updated)
-    temp_path = pathlib.Path(temp.name)
-try:
-    os.chmod(temp_path, path.stat().st_mode)
-    os.replace(temp_path, path)
-except BaseException:
-    temp_path.unlink(missing_ok=True)
-    raise
-PY
-  pin_changed=true
-fi
-
-if [[ $running_version == "$latest" && $pin_changed == false ]]; then
+if [[ $installed_version == "$latest" ]]; then
   echo "Codex $latest is already active."
   exit 0
 fi
+if [[ $(printf '%s\n' "$installed_version" "$latest" | sort -V | tail -n 1) != "$latest" ]]; then
+  echo "Installed Codex $installed_version is newer than release $latest." >&2
+  exit 1
+fi
 
-echo "Applying Codex $latest to $host (sudo may ask for your password)..."
-sudo nixos-rebuild switch --flake "$repo#$host"
-echo 'Codex updated. Run codex --version in a new shell to confirm.'
+cli_asset=codex-x86_64-unknown-linux-musl.tar.gz
+host_asset=codex-code-mode-host-x86_64-unknown-linux-musl.tar.gz
+cli_digest=$(jq -er --arg name "$cli_asset" '.assets[] | select(.name == $name) | .digest' <<< "$release_json")
+host_digest=$(jq -er --arg name "$host_asset" '.assets[] | select(.name == $name) | .digest' <<< "$release_json")
+if [[ ! $cli_digest =~ ^sha256:[a-f0-9]{64}$ || ! $host_digest =~ ^sha256:[a-f0-9]{64}$ ]]; then
+  echo 'Release assets lack valid SHA-256 digests' >&2
+  exit 1
+fi
+
+version_dir=$root/versions/$latest
+if [[ ! -e $version_dir ]]; then
+  echo "Downloading Codex $latest..."
+  temp_dir=$(mktemp -d "$root/.update.XXXXXXXX")
+  trap 'rm -rf -- "$temp_dir"' EXIT
+  base=https://github.com/openai/codex/releases/download/$release
+  curl --fail --silent --show-error --location --retry 3 \
+    --output "$temp_dir/$cli_asset" "$base/$cli_asset"
+  curl --fail --silent --show-error --location --retry 3 \
+    --output "$temp_dir/$host_asset" "$base/$host_asset"
+
+  cli_actual=$(sha256sum "$temp_dir/$cli_asset" | cut -d ' ' -f 1)
+  host_actual=$(sha256sum "$temp_dir/$host_asset" | cut -d ' ' -f 1)
+  if [[ $cli_actual != "${cli_digest#sha256:}" || $host_actual != "${host_digest#sha256:}" ]]; then
+    echo 'Codex archive checksum mismatch' >&2
+    exit 1
+  fi
+
+  tar -xzf "$temp_dir/$cli_asset" -C "$temp_dir" codex-x86_64-unknown-linux-musl
+  tar -xzf "$temp_dir/$host_asset" -C "$temp_dir" codex-code-mode-host-x86_64-unknown-linux-musl
+  mkdir "$temp_dir/release"
+  install -m755 "$temp_dir/codex-x86_64-unknown-linux-musl" "$temp_dir/release/codex"
+  install -m755 "$temp_dir/codex-code-mode-host-x86_64-unknown-linux-musl" "$temp_dir/release/codex-code-mode-host"
+  printf '%s\n' "$latest" > "$temp_dir/release/version"
+  if [[ $("$temp_dir/release/codex" --version) != "codex-cli $latest" ]]; then
+    echo 'Downloaded Codex binary reports an unexpected version' >&2
+    exit 1
+  fi
+  mv -T "$temp_dir/release" "$version_dir"
+else
+  if [[ ! -x $version_dir/codex || ! -x $version_dir/codex-code-mode-host ||
+        ! -f $version_dir/version || $(<"$version_dir/version") != "$latest" ]]; then
+    echo "Incomplete Codex installation at $version_dir" >&2
+    exit 1
+  fi
+  temp_dir=$(mktemp -d "$root/.update.XXXXXXXX")
+  trap 'rm -rf -- "$temp_dir"' EXIT
+fi
+
+ln -s "versions/$latest" "$temp_dir/current"
+mv -Tf "$temp_dir/current" "$root/current"
+echo "Codex $latest is active."
