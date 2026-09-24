@@ -91,9 +91,6 @@ let
     { id = "gpt-6-astra"; name = "GPT 6.0 Astra"; contextWindow = 272000; }
     { id = "gpt-6-sol"; name = "GPT 6.0 Sol"; contextWindow = 272000; }
     { id = "gpt-6-luna"; name = "GPT 6.0 Luna"; contextWindow = 272000; }
-    { id = "gpt-5.6-sol"; name = "GPT 5.6 Sol"; contextWindow = 272000; }
-    { id = "gpt-5.6-terra"; name = "GPT 5.6 Terra"; contextWindow = 272000; }
-    { id = "gpt-5.6-luna"; name = "GPT 5.6 Luna"; contextWindow = 272000; }
     {
       id = "glm-5.3";
       name = "GLM 5.3";
@@ -241,7 +238,11 @@ in
     document = tomlkit.parse(original)
     for key in ("model_provider", "check_for_update_on_startup"):
         document[key] = desired[key]
-    document.setdefault("model", "gpt-5.6-sol")
+    current_model = document.get("model")
+    if current_model is None or str(current_model) in (
+        "gpt-5.6-sol", "gpt-5.6-terra", "gpt-5.6-luna"
+    ):
+        document["model"] = "gpt-6-sol"
     providers = document.setdefault("model_providers", tomlkit.table())
     providers["driva_proxy"] = desired["model_providers"]["driva_proxy"]
     tui = document.setdefault("tui", tomlkit.table())
