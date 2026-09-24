@@ -35,10 +35,12 @@ in {
         dwt = true;
         natural-scroll = false;
       };
-      # The Zenbook has an ABNT2 keyboard; the other hosts use US keyboards.
+      # Keep ABNT2 as the Zenbook default, with US International available for
+      # its external ANSI keyboard.
       keyboard.xkb =
         if hostName == "zenbook" then {
-          layout = "br";
+          layout = "br,us";
+          variant = ",intl";
         } else {
           layout = "us";
           variant = "intl";
@@ -259,6 +261,8 @@ in {
 
       "Mod+Shift+E".action.quit = [];
       "Mod+Shift+P".action.power-off-monitors = [];
-    };
+    } // (if hostName == "zenbook" then {
+      "Mod+Space".action.switch-layout = "next";
+    } else { });
   };
 }

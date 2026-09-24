@@ -1,4 +1,9 @@
 { ... }: {
+  # NetworkManager passes each Wi-Fi network's DNS servers to resolved. NetBird
+  # can then register its domains per interface instead of retaining a stale
+  # resolvconf upstream after roaming to a different network.
+  services.resolved.enable = true;
+
   services.netbird = {
     enable = true;
     ui.enable = true;
