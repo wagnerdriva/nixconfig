@@ -470,6 +470,7 @@ in
     (callPackage ../../packages/treehouse.nix { })
     btop
     jq
+    kubectl
     nodejs_22
   ] ++ lib.optional enablePi pi-driva ++ lib.optionals (!minimalAgentSetup) [
     (callPackage ../../packages/chatgpt.nix { codexCli = codex-driva; })
