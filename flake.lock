@@ -289,6 +289,27 @@
         "type": "github"
       }
     },
+    "query-on": {
+      "inputs": {
+        "nixpkgs": [
+          "nixpkgs"
+        ]
+      },
+      "locked": {
+        "lastModified": 1788310414,
+        "narHash": "sha256-tWrRnHt7dlYib/kkMvCRiZuksDAUQQI6fpdBIFUwXuk=",
+        "ref": "main",
+        "rev": "502e04bb4e43ddf77e5c37cdf463b03805ad6bf8",
+        "revCount": 12,
+        "type": "git",
+        "url": "https://github.com/ramosrafh/query-on"
+      },
+      "original": {
+        "ref": "main",
+        "type": "git",
+        "url": "https://github.com/ramosrafh/query-on"
+      }
+    },
     "root": {
       "inputs": {
         "ai-memory": "ai-memory",
@@ -297,7 +318,8 @@
         "herdr": "herdr",
         "home-manager": "home-manager",
         "niri-flake": "niri-flake",
-        "nixpkgs": "nixpkgs_4"
+        "nixpkgs": "nixpkgs_4",
+        "query-on": "query-on"
       }
     },
     "rust-overlay": {

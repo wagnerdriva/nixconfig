@@ -8,6 +8,11 @@
 
     herdr.url = "github:herdrdev/herdr";
 
+    query-on = {
+      url = "git+https://github.com/ramosrafh/query-on?ref=main";
+      inputs.nixpkgs.follows = "nixpkgs";
+    };
+
     home-manager = {
       url = "github:nix-community/home-manager/release-26.05";
       inputs.nixpkgs.follows = "nixpkgs";
@@ -29,7 +34,7 @@
 
   };
 
-  outputs = { nixpkgs, home-manager, disko, niri-flake, ai-memory, dms, herdr, ... }:
+  outputs = { nixpkgs, home-manager, disko, niri-flake, ai-memory, dms, herdr, query-on, ... }:
     let
       system = "x86_64-linux";
       primaryUser = "wagner";
@@ -59,7 +64,8 @@
                     ai-memory.packages.${system}.default;
                   herdrPackage = herdr.packages.${system}.default;
                   herdrPiExtension = "${herdr}/src/integration/assets/pi/herdr-agent-state.ts";
-                  queryOnPackage = null;
+                  queryOnPackage = if minimalAgentSetup then null else
+                    query-on.packages.${system}.default;
                   inherit minimalAgentSetup;
                   inherit dms;
                 };
