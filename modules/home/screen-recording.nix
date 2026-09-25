@@ -15,6 +15,10 @@ let
       pid_file="$state_dir/pid"
       mkdir -p "$state_dir"
 
+      geometry_dir="''${XDG_STATE_HOME:-$HOME/.local/state}/screen-record"
+      geometry_file="$geometry_dir/last-geometry"
+      mkdir -p "$geometry_dir"
+
       if [[ -f "$pid_file" ]]; then
         recorder_pid="$(<"$pid_file")"
         recorder_exe=""
@@ -34,7 +38,38 @@ let
         rm -f "$pid_file"
       fi
 
-      geometry="$(slurp -d -f '%wx%h+%x+%y')" || exit 0
+      geometry=""
+      saved_geometry=""
+      if [[ -s "$geometry_file" ]]; then
+        saved_geometry="$(<"$geometry_file")"
+      fi
+
+      if [[ -n "$saved_geometry" ]]; then
+        saved_dims="''${saved_geometry%%+*}"
+        region_choice="$(printf '%s\n' \
+          "Última seleção ($saved_dims)" \
+          'Nova seleção' |
+          fuzzel --dmenu --lines=2 --prompt='Região da gravação: ')" || exit 0
+        case "$region_choice" in
+          "Última seleção ($saved_dims)")
+            geometry="$saved_geometry"
+            ;;
+          'Nova seleção')
+            geometry="$(slurp -d -f '%wx%h+%x+%y')" || exit 0
+            ;;
+          *)
+            exit 0
+            ;;
+        esac
+      else
+        geometry="$(slurp -d -f '%wx%h+%x+%y')" || exit 0
+      fi
+
+      if [[ -z "$geometry" ]]; then
+        exit 0
+      fi
+      printf '%s\n' "$geometry" > "$geometry_file"
+
       audio_choice="$(printf '%s\n' \
         'Microfone + som do computador' \
         'Som do computador' \
