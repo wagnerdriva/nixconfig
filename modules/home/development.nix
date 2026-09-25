@@ -468,12 +468,12 @@ in
     # tmux, no-mistakes, chrome-devtools-axi and lavish-axi are left out.
     (callPackage ../../packages/axi-tools { })
     (callPackage ../../packages/treehouse.nix { })
+    btop
     jq
     nodejs_22
   ] ++ lib.optional enablePi pi-driva ++ lib.optionals (!minimalAgentSetup) [
     (callPackage ../../packages/chatgpt.nix { codexCli = codex-driva; })
     aiMemoryPackage
-    btop
     orca-app
     orca-ide
 
