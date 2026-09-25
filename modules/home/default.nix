@@ -49,6 +49,7 @@
         commandLineArgs = "--disable-features=WaylandTextInputV3";
       })
       localsend
+      losslesscut
       papers
       spotify
       unzip
