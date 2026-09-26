@@ -6,6 +6,7 @@
     ../../modules/nixos/base.nix
     ../../modules/nixos/desktop.nix
     ../../modules/nixos/docker.nix
+    ../../modules/nixos/fingerprint.nix
     ../../modules/nixos/laptop-power.nix
     ../../modules/nixos/netbird.nix
     ../../modules/nixos/nix-ld.nix

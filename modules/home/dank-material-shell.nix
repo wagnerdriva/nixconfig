@@ -75,6 +75,10 @@ in
       currentThemeCategory = "custom";
       customThemeFile = "~/.config/DankMaterialShell/nord.json";
 
+      # Accept a finger on the lock screen alongside the password. DMS probes
+      # fprintd-list first, so hosts without fprintd keep password-only.
+      enableFprint = true;
+
       # Keep the workspace switcher visible in the top-left bar with both the
       # numeric index and the applications currently open there.
       showWorkspaceSwitcher = true;
