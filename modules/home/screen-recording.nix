@@ -103,12 +103,15 @@ let
       mkdir -p "$recordings_dir"
       output="$recordings_dir/$(date '+%Y-%m-%d_%H-%M-%S').mp4"
 
+      # On Intel VAAPI the quality preset is a constant QP: "high" is QP 30,
+      # which smears small UI text and leaves ghosts of old frames until the
+      # next keyframe. "ultra" (QP 22) keeps text crisp; lower QPs barely help.
       gpu-screen-recorder \
         -w region \
         -region "$geometry" \
         -f 60 \
         -k h264 \
-        -q high \
+        -q ultra \
         -ac aac \
         "''${audio_args[@]}" \
         -o "$output" &

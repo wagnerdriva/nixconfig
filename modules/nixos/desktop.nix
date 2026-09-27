@@ -20,6 +20,10 @@
   '';
   programs.dconf.enable = true;
 
+  # Region capture uses gsr-kms-server, which needs CAP_SYS_ADMIN. Without the
+  # setcap wrapper every recording asks for the password through pkexec.
+  programs.gpu-screen-recorder.enable = true;
+
   programs.niri = {
     enable = true;
     package = pkgs.niri-unstable;
