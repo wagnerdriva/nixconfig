@@ -1,4 +1,4 @@
-{ pkgs, ... }:
+{ config, pkgs, ... }:
 let
   screen-record = pkgs.writeShellApplication {
     name = "screen-record";
@@ -6,10 +6,11 @@ let
       coreutils
       fuzzel
       gpu-screen-recorder
+      jq
       libnotify
       slurp
       xdg-user-dirs
-    ];
+    ] ++ [ config.programs.niri.package ];
     text = ''
       state_dir="''${XDG_RUNTIME_DIR:-/tmp}/screen-record"
       pid_file="$state_dir/pid"
@@ -38,37 +39,49 @@ let
         rm -f "$pid_file"
       fi
 
-      geometry=""
       saved_geometry=""
       if [[ -s "$geometry_file" ]]; then
         saved_geometry="$(<"$geometry_file")"
       fi
 
+      region_options=('Tela inteira')
+      last_region_option=""
       if [[ -n "$saved_geometry" ]]; then
-        saved_dims="''${saved_geometry%%+*}"
-        region_choice="$(printf '%s\n' \
-          "Última seleção ($saved_dims)" \
-          'Nova seleção' |
-          fuzzel --dmenu --lines=2 --prompt='Região da gravação: ')" || exit 0
-        case "$region_choice" in
-          "Última seleção ($saved_dims)")
-            geometry="$saved_geometry"
-            ;;
-          'Nova seleção')
-            geometry="$(slurp -d -f '%wx%h+%x+%y')" || exit 0
-            ;;
-          *)
-            exit 0
-            ;;
-        esac
-      else
-        geometry="$(slurp -d -f '%wx%h+%x+%y')" || exit 0
+        last_region_option="Última seleção (''${saved_geometry%%+*})"
+        region_options+=("$last_region_option")
       fi
+      region_options+=('Nova seleção')
 
-      if [[ -z "$geometry" ]]; then
+      region_choice="$(printf '%s\n' "''${region_options[@]}" |
+        fuzzel --dmenu --lines="''${#region_options[@]}" \
+          --prompt='Região da gravação: ')" || exit 0
+
+      capture_args=()
+      if [[ "$region_choice" == 'Tela inteira' ]]; then
+        # Record the monitor that has focus, which is also where the menu
+        # opened. niri and gpu-screen-recorder share the DRM connector names.
+        output_name="$(niri msg --json focused-output | jq -r '.name // empty')"
+        if [[ -z "$output_name" ]]; then
+          notify-send \
+            --urgency=critical \
+            --app-name="Gravação de tela" \
+            "Não foi possível gravar a tela" \
+            "Nenhum monitor em foco foi encontrado."
+          exit 1
+        fi
+        capture_args=(-w "$output_name")
+      elif [[ -n "$last_region_option" && "$region_choice" == "$last_region_option" ]]; then
+        capture_args=(-w region -region "$saved_geometry")
+      elif [[ "$region_choice" == 'Nova seleção' ]]; then
+        geometry="$(slurp -d -f '%wx%h+%x+%y')" || exit 0
+        if [[ -z "$geometry" ]]; then
+          exit 0
+        fi
+        printf '%s\n' "$geometry" > "$geometry_file"
+        capture_args=(-w region -region "$geometry")
+      else
         exit 0
       fi
-      printf '%s\n' "$geometry" > "$geometry_file"
 
       audio_choice="$(printf '%s\n' \
         'Microfone + som do computador' \
@@ -107,8 +120,7 @@ let
       # which smears small UI text and leaves ghosts of old frames until the
       # next keyframe. "ultra" (QP 22) keeps text crisp; lower QPs barely help.
       gpu-screen-recorder \
-        -w region \
-        -region "$geometry" \
+        "''${capture_args[@]}" \
         -f 60 \
         -k h264 \
         -q ultra \
