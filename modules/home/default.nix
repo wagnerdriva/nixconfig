@@ -12,6 +12,7 @@
     ./niri.nix
     ./query-on.nix
     ./screen-recording.nix
+    ./screenshot.nix
     ./terminal.nix
     ./udiskie.nix
     ./wallpaper.nix
