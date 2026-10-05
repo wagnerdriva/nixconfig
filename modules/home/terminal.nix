@@ -1,6 +1,51 @@
-{ ... }: {
-  programs.alacritty = {
+{ hostName, lib, ... }:
+let
+  useKitty = builtins.elem hostName [ "ryzen" "zenbook" ];
+in {
+  programs.kitty = {
+    enable = useKitty;
+    font = {
+      name = "Hack Nerd Font";
+      size = 13.0;
+    };
+    settings = {
+      window_padding_width = "10 12";
+      background_opacity = 0.96;
+      cursor_shape = "beam";
+      cursor_blink_interval = 0.5;
+      background = "#2e3440";
+      foreground = "#d8dee9";
+      cursor = "#d8dee9";
+      cursor_text_color = "#2e3440";
+      selection_background = "#4c566a";
+      selection_foreground = "#d8dee9";
+      color0 = "#3b4252";
+      color1 = "#bf616a";
+      color2 = "#a3be8c";
+      color3 = "#ebcb8b";
+      color4 = "#81a1c1";
+      color5 = "#b48ead";
+      color6 = "#88c0d0";
+      color7 = "#e5e9f0";
+      color8 = "#4c566a";
+      color9 = "#bf616a";
+      color10 = "#a3be8c";
+      color11 = "#ebcb8b";
+      color12 = "#81a1c1";
+      color13 = "#b48ead";
+      color14 = "#8fbcbb";
+      color15 = "#eceff4";
+    };
+  };
+
+  home.sessionVariables = lib.mkIf useKitty { TERMINAL = "kitty"; };
+  xdg.terminal-exec = lib.mkIf useKitty {
     enable = true;
+    settings.default = [ "kitty.desktop" ];
+  };
+
+  programs.alacritty = {
+    enable = !useKitty;
     settings = {
       window = {
         padding = { x = 12; y = 10; };

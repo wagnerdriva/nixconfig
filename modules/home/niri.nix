@@ -1,6 +1,7 @@
-{ hostName, ... }:
+{ config, hostName, ... }:
 let
   colors = import ./colors.nix;
+  terminal = if config.programs.kitty.enable then "kitty" else "alacritty";
 in {
   programs.niri.settings = {
     # These connector names and positions belong to the Precision dock setup.
@@ -107,7 +108,7 @@ in {
       }
       {
         matches = [
-          { app-id = "^Alacritty$"; }
+          { app-id = if config.programs.kitty.enable then "^kitty$" else "^Alacritty$"; }
           { app-id = "^org.gnome.Nautilus$"; }
         ];
         default-column-width = { proportion = 0.5; };
@@ -164,7 +165,7 @@ in {
     binds = {
       "Mod+Shift+Slash".action.show-hotkey-overlay = [];
 
-      "Mod+Return".action.spawn = [ "alacritty" ];
+      "Mod+Return".action.spawn = [ terminal ];
       "Mod+E".action.spawn = [ "nautilus" ];
       "Mod+R".action.spawn = [ "dms" "ipc" "call" "spotlight" "toggle" ];
       "Mod+L".action.spawn = [ "dms" "ipc" "call" "lock" "lock" ];

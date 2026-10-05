@@ -35,6 +35,12 @@ desenvolvimento, com Niri e o wallpaper padrão em
 `assets/wallpapers/1330829.jpeg`. `Mod+W` abre o seletor dos sete wallpapers
 disponíveis e mantém a escolha entre reinícios.
 
+Ryzen e Zenbook usam Kitty como terminal padrão, com Hack Nerd Font e paleta
+Nord. `Mod+Enter` abre Kitty; `TERMINAL` e `xdg-terminal-exec` também o
+selecionam. Kitty oferece o protocolo de imagens necessário para mascotes do
+Codex. Ao usar Herdr remote, a detecção desse suporte no Codex remoto também
+depende das informações de terminal repassadas pelo Herdr.
+
 ## Ferramentas de desenvolvimento
 
 O Home Manager instala Zed (`zed`), Orca (`orca-ide`) e Query On (`query-on`)
