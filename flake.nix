@@ -39,7 +39,7 @@
       system = "x86_64-linux";
       primaryUser = "wagner";
 
-      mkConfiguration = { host, hostName, minimalAgentSetup ? false }:
+      mkConfiguration = { host, hostName, agentProfile ? hostName, minimalAgentSetup ? false }:
         nixpkgs.lib.nixosSystem {
           inherit system;
           specialArgs = { inherit primaryUser hostName minimalAgentSetup; };
@@ -59,7 +59,7 @@
                 backupFileExtension = "hm-backup";
                 users.${primaryUser} = import ./modules/home;
                 extraSpecialArgs = {
-                  inherit primaryUser hostName;
+                  inherit primaryUser hostName agentProfile;
                   aiMemoryPackage = if minimalAgentSetup then null else
                     ai-memory.packages.${system}.default;
                   herdrPackage = herdr.packages.${system}.default;
@@ -86,6 +86,12 @@
         ryzen = mkConfiguration {
           host = ./hosts/ryzen;
           hostName = "ryzen";
+          minimalAgentSetup = true;
+        };
+        desktop-novo = mkConfiguration {
+          host = ./hosts/desktop-novo;
+          hostName = "desktop-novo";
+          agentProfile = "ryzen";
           minimalAgentSetup = true;
         };
       };

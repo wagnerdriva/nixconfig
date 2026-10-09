@@ -22,10 +22,16 @@ O Dell Precision 5530 (`precision`) é o notebook anterior:
 
 Todos usam NixOS 26.05, Niri e Home Manager.
 
+O desktop novo (`desktop-novo`) usa Ryzen 7 5700X, 64 GiB de RAM e AMD Radeon
+Navi 32. O WDC de 1 TB contém o NixOS instalado com LUKS2/Btrfs; o Kingston de
+500 GB fica reservado para Windows. A configuração reutiliza o desktop e o
+perfil de agentes do `ryzen`, sem importar seu hardware ou seu layout de disco.
+Veja `docs/migracao-desktop-novo.md` antes de ativar ou remover o módulo temporário.
+
 ## Como ler esta configuração
 
-`flake.nix` fixa as dependências e monta as configurações `zenbook`, `precision`
-e `ryzen`.
+`flake.nix` fixa as dependências e monta as configurações `zenbook`, `precision`,
+`ryzen` e `desktop-novo`.
 Os módulos em `hosts/` contêm o que depende de cada máquina. `modules/nixos`
 descreve o sistema compartilhável e `modules/home` descreve a sessão gráfica e
 as preferências do usuário `wagner`.
@@ -81,7 +87,10 @@ repo e nunca passa pelo Nix store.
 
 ## Armazenamento planejado
 
-O instalador apaga o NVMe inteiro e cria:
+Esta seção se refere aos hosts com layout disko. O `desktop-novo` já está
+instalado e usa seus UUIDs e subvolumes atuais; não executar disko nesse host.
+
+Nos hosts com disko, o instalador apaga o NVMe inteiro e cria:
 
 - GPT e uma partição EFI de 1 GiB;
 - LUKS2 no restante do disco;

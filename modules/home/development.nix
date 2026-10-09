@@ -1,14 +1,14 @@
-{ config, lib, pkgs, aiMemoryPackage ? null, herdrPackage, herdrPiExtension, minimalAgentSetup, hostName, ... }:
+{ config, lib, pkgs, aiMemoryPackage ? null, herdrPackage, herdrPiExtension, minimalAgentSetup, hostName, agentProfile ? hostName, ... }:
 let
   drivaProxyUrl = "http://vpn-driva.netbird.driva.io:8317";
   proxyKeyFile = "$HOME/.config/driva/proxy-key";
 
   codexVersion = "0.156.1";
-  enablePi = hostName != "ryzen";
+  enablePi = agentProfile != "ryzen";
 
   # Fable's unqualified alias routes to an unavailable upstream. On Ryzen,
   # use the same explicit Claude namespace as Pi, also accepted by Responses.
-  codexCatalog = if hostName != "ryzen" then ./codex-models.json else
+  codexCatalog = if agentProfile != "ryzen" then ./codex-models.json else
     pkgs.writeText "codex-ryzen-models.json" (builtins.toJSON (
       let catalog = builtins.fromJSON (builtins.readFile ./codex-models.json);
       in catalog // {
