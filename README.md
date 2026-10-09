@@ -55,6 +55,7 @@ ClickHouse. Também são instalados Codex, Claude Code, `btop`, Node.js, pnpm e
 utilitários básicos de desenvolvimento. `codex` já abre usando o proxy da
 Driva; `codex-openai`
 preserva o cliente sem esse override.
+O Zenbook também instala o cliente desktop Grok Bot para Linux x64.
 O Home Manager também persiste `model_provider = "driva_proxy"` no arquivo de
 configuração do Codex, preservando as demais preferências. O app recarrega esse
 arquivo ao criar conversas; apenas definir o provedor no wrapper não basta.

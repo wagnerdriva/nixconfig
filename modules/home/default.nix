@@ -55,6 +55,8 @@
       spotify
       unzip
       zed-editor
+    ] ++ lib.optionals (hostName == "zenbook") [
+      (pkgs.callPackage ../../packages/grok-bot.nix { })
     ];
 
     sessionVariables = {
