@@ -93,6 +93,13 @@ in
     source = "${grokBotPackage}/share/icons/hicolor/1024x1024/apps/grok-bot.png";
   };
 
+  # The desktop portal uses this cache to discover OAuth callback handlers.
+  home.activation.updateGrokBotDesktopDatabase = lib.mkIf (hostName == "zenbook") (
+    lib.hm.dag.entryAfter [ "linkGeneration" ] ''
+      run ${pkgs.desktop-file-utils}/bin/update-desktop-database ${lib.escapeShellArg "${config.xdg.dataHome}/applications"}
+    ''
+  );
+
   programs.home-manager.enable = true;
 
   programs.fish = {
@@ -154,6 +161,9 @@ in
     "x-scheme-handler/https" = [ "google-chrome.desktop" ];
     "x-scheme-handler/about" = [ "google-chrome.desktop" ];
     "x-scheme-handler/unknown" = [ "google-chrome.desktop" ];
+  } // lib.optionalAttrs (hostName == "zenbook") {
+    "x-scheme-handler/grokbot" = [ "grok-bot.desktop" ];
+    "x-scheme-handler/sand" = [ "grok-bot.desktop" ];
   };
 
 }
