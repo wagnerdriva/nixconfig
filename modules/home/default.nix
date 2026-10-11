@@ -1,4 +1,7 @@
 { config, lib, pkgs, primaryUser, hostName, minimalAgentSetup, ... }:
+let
+  grokBotPackage = pkgs.callPackage ../../packages/grok-bot.nix { };
+in
 {
   imports = lib.optionals (!minimalAgentSetup) [
     ./agent-instructions.nix
@@ -39,6 +42,12 @@
       '';
     };
 
+    # Keep the launcher current after user-only Home Manager activation,
+    # even while /etc/profiles/per-user still belongs to the older system.
+    file.".local/bin/grok-bot" = lib.mkIf (hostName == "zenbook") {
+      source = "${grokBotPackage}/bin/grok-bot";
+    };
+
     packages = with pkgs; [
       celluloid
       eog
@@ -56,7 +65,7 @@
       unzip
       zed-editor
     ] ++ lib.optionals (hostName == "zenbook") [
-      (pkgs.callPackage ../../packages/grok-bot.nix { })
+      grokBotPackage
     ];
 
     sessionVariables = {
@@ -74,6 +83,14 @@
       name = "Adwaita";
       package = pkgs.adwaita-icon-theme;
     };
+  };
+
+  xdg.dataFile."applications/grok-bot.desktop" = lib.mkIf (hostName == "zenbook") {
+    source = "${grokBotPackage}/share/applications/grok-bot.desktop";
+  };
+
+  xdg.dataFile."icons/hicolor/1024x1024/apps/grok-bot.png" = lib.mkIf (hostName == "zenbook") {
+    source = "${grokBotPackage}/share/icons/hicolor/1024x1024/apps/grok-bot.png";
   };
 
   programs.home-manager.enable = true;
