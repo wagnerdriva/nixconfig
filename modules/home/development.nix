@@ -3,22 +3,36 @@ let
   drivaProxyUrl = "http://vpn-driva.netbird.driva.io:8317";
   proxyKeyFile = "$HOME/.config/driva/proxy-key";
 
-  codexVersion = "0.156.1";
+  codexVersion = "0.162.1";
   enablePi = agentProfile != "ryzen";
 
-  # Fable's unqualified alias routes to an unavailable upstream. On Ryzen,
-  # use the same explicit Claude namespace as Pi, also accepted by Responses.
-  codexCatalog = if agentProfile != "ryzen" then ./codex-models.json else
-    pkgs.writeText "codex-ryzen-models.json" (builtins.toJSON (
-      let catalog = builtins.fromJSON (builtins.readFile ./codex-models.json);
-      in catalog // {
-        models = map (model:
-          if model.slug == "claude-fable-5-1" then
-            model // { slug = "claude/claude-fable-5-1"; }
-          else model
-        ) catalog.models;
-      }
-    ));
+  # Reuse Sol's Codex metadata for the proxy's separate 6.1 model ID. Fable's
+  # unqualified alias routes to an unavailable upstream, so Ryzen uses the
+  # explicit Claude namespace accepted by Responses.
+  codexCatalog =
+    let
+      catalog = builtins.fromJSON (builtins.readFile ./codex-models.json);
+      catalogWithSol61 = catalog // {
+        models = builtins.concatLists (map (model:
+          if model.slug == "gpt-6-sol" then [
+            model
+            (model // {
+              slug = "gpt-6.1-sol";
+              display_name = "GPT 6.1 Sol";
+              description = "GPT-6.1 Sol Codex model.";
+            })
+          ] else [ model ]
+        ) catalog.models);
+      };
+      selectedCatalog = if agentProfile != "ryzen" then catalogWithSol61 else
+        catalogWithSol61 // {
+          models = map (model:
+            if model.slug == "claude-fable-5-1" then
+              model // { slug = "claude/claude-fable-5-1"; }
+            else model
+          ) catalogWithSol61.models;
+        };
+    in pkgs.writeText "codex-models.json" (builtins.toJSON selectedCatalog);
 
   codex-package = pkgs.stdenvNoCC.mkDerivation {
     pname = "codex";
@@ -28,11 +42,11 @@ let
     srcs = [
       (pkgs.fetchurl {
         url = "https://github.com/openai/codex/releases/download/rust-v${codexVersion}/codex-x86_64-unknown-linux-musl.tar.gz";
-        hash = "sha256-r/RlOag6/4bjxixZK84sUNlTkfnfKJr68DpQwB0UUz0=";
+        hash = "sha256-hvJo2BuJjz4UTF7P8q0v2ixYAuBC1hlbclOP4PoSUFc=";
       })
       (pkgs.fetchurl {
         url = "https://github.com/openai/codex/releases/download/rust-v${codexVersion}/codex-code-mode-host-x86_64-unknown-linux-musl.tar.gz";
-        hash = "sha256-qSnaqfagvdwAwMnmQC3xF7ElrNlvnVVPbJnDLH5mxgg=";
+        hash = "sha256-RYI56kXB/FCNiWlfGAqzUvKDRwmopGkppEZvTwQ5mto=";
       })
     ];
     sourceRoot = ".";
@@ -90,6 +104,7 @@ let
   drivaResponsesModels = map mkDrivaModel [
     { id = "gpt-6-astra"; name = "GPT 6.0 Astra"; contextWindow = 272000; }
     { id = "gpt-6-sol"; name = "GPT 6.0 Sol"; contextWindow = 272000; }
+    { id = "gpt-6.1-sol"; name = "GPT 6.1 Sol"; contextWindow = 272000; }
     { id = "gpt-6-luna"; name = "GPT 6.0 Luna"; contextWindow = 272000; }
     {
       id = "glm-5.3";
@@ -238,11 +253,6 @@ in
     document = tomlkit.parse(original)
     for key in ("model_provider", "check_for_update_on_startup"):
         document[key] = desired[key]
-    current_model = document.get("model")
-    if current_model is None or str(current_model) in (
-        "gpt-5.6-sol", "gpt-5.6-terra", "gpt-5.6-luna"
-    ):
-        document["model"] = "gpt-6-sol"
     providers = document.setdefault("model_providers", tomlkit.table())
     providers["driva_proxy"] = desired["model_providers"]["driva_proxy"]
     tui = document.setdefault("tui", tomlkit.table())

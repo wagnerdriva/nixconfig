@@ -5,11 +5,11 @@
 }:
 let
   pname = "grok-bot";
-  version = "0.24.0";
+  version = "0.68.1";
 
   src = fetchurl {
-    url = "https://downloads.cursor.com/grokbot/stable/302d75da596fc8d11ee0446a19b31c33c6676c2c/linux/x64/Grok_Bot_${version}.AppImage";
-    hash = "sha256-Y3hh7sHeefZOBlYU4PPfZpC8yUdLrjy62S4d/1q+dhg=";
+    url = "https://downloads.cursor.com/grokbot/stable/33103062f95061ccf9c81c5b365d37ab152c3b66/linux/x64/Grok_Bot_${version}.AppImage";
+    hash = "sha256-L+fFrOzM1VehM7DGGSmX7AwTIPHp/Hvv/MprXozvuls=";
   };
 
   contents = appimageTools.extractType2 {
@@ -24,7 +24,7 @@ appimageTools.wrapType2 {
     substituteInPlace $out/share/applications/grok-bot.desktop \
       --replace-fail "Exec=AppRun --no-sandbox %U" "Exec=$out/bin/grok-bot --no-sandbox %U"
     install -Dm444 \
-      ${contents}/usr/share/icons/hicolor/1024x1024/apps/grok-bot.png \
+      ${contents}/resources/icon.png \
       $out/share/icons/hicolor/1024x1024/apps/grok-bot.png
   '';
 
