@@ -99,9 +99,9 @@
           hostName = "ryzen";
           minimalAgentSetup = true;
         };
-        desktop-novo = mkConfiguration {
+        servidor-principal = mkConfiguration {
           host = ./hosts/desktop-novo;
-          hostName = "desktop-novo";
+          hostName = "servidor-principal";
           agentProfile = "ryzen";
           minimalAgentSetup = true;
         };

@@ -9,7 +9,11 @@
     "usbhid"
     "sd_mod"
   ];
-  boot.kernelModules = [ "kvm-amd" "amdgpu" ];
+  nixpkgs.config.permittedInsecurePackages = [
+    "broadcom-sta-6.30.223.271-59-6.18.48"
+  ];
+  boot.extraModulePackages = [ config.boot.kernelPackages.broadcom_sta ];
+  boot.kernelModules = [ "kvm-amd" "amdgpu" "wl" ];
 
   boot.initrd.luks.devices."nixos-root".device =
     "/dev/disk/by-uuid/17a0fe8b-72ea-4de0-8cf6-127869db1e65";

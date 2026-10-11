@@ -11,7 +11,7 @@
     ../../modules/nixos/zerotier.nix
   ];
 
-  networking.hostName = "desktop-novo";
+  networking.hostName = "servidor-principal";
   system.stateVersion = "26.05";
 
   boot.loader.timeout = 10;

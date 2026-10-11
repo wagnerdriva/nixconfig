@@ -22,10 +22,6 @@
     "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAID/RhmwFjFWJcU+NRx7dfMFN5lFp3kR1BD5jQ5bMG2Dv migracao-live-20261008"
   ];
 
-  services.netbird.enable = lib.mkForce false;
-  services.netbird.clients = lib.mkForce { };
-  services.netbird.ui.enable = lib.mkForce false;
-  services.zerotierone.enable = lib.mkForce false;
   nix.gc.automatic = lib.mkForce false;
   virtualisation.docker.autoPrune.enable = lib.mkForce false;
   services.snapper.configs.home.TIMELINE_CLEANUP = lib.mkForce false;
