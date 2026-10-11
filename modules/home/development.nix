@@ -224,6 +224,7 @@ let
 
   codexProxySettings = pkgs.writeText "codex-proxy-settings.json" (builtins.toJSON {
     model_provider = "driva_proxy";
+    model_catalog_json = "${codexCatalog}";
     tui.theme = "nord";
     check_for_update_on_startup = false;
     model_providers.driva_proxy = {
@@ -251,7 +252,7 @@ in
     desired = json.loads(pathlib.Path(sys.argv[2]).read_text())
     original = path.read_text() if path.exists() else ""
     document = tomlkit.parse(original)
-    for key in ("model_provider", "check_for_update_on_startup"):
+    for key in ("model_provider", "model_catalog_json", "check_for_update_on_startup"):
         document[key] = desired[key]
     providers = document.setdefault("model_providers", tomlkit.table())
     providers["driva_proxy"] = desired["model_providers"]["driva_proxy"]
