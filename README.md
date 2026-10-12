@@ -112,6 +112,13 @@ Aplicar uma alteração:
 sudo nixos-rebuild switch --flake ~/nixos-config#zenbook
 ```
 
+Para atualizar o Grok Bot, altere `version`, a URL e o hash em
+`packages/grok-bot.nix` e aplique o sistema com o comando acima. Ativar apenas
+o Home Manager do usuário não atualiza a geração usada no boot: ao reiniciar,
+o serviço `home-manager-wagner` reaplica a configuração antiga e pode remover
+os atalhos novos. Depois do `switch`, feche e reabra o Grok Bot para executar
+o novo binário.
+
 Para atualizar o Pi, altere `version` e `hash` em
 [`packages/pi.nix`](packages/pi.nix), usando o hash SRI do asset
 `pi-linux-x64.tar.gz` da release desejada. Depois valide e aplique:
