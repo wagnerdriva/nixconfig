@@ -24,7 +24,11 @@ in {
           position = { x = 1067; y = 1080; };
         };
       };
-      zenbook."eDP-1".scale = 1.75;
+      zenbook = {
+        "eDP-1".scale = 1.75;
+        # Match the TV by EDID so other HDMI monitors keep their own scale.
+        "Samsung Electric Company Q70A 0x01000E00".scale = 2;
+      };
     }.${hostName} or { };
 
     input = {

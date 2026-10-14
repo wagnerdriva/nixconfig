@@ -4,14 +4,32 @@ let
   # (3840 - logical width) / 2 at the chosen scale. Every profile includes the
   # built-in panel, so hosts without one (the Ryzen desktop) skip kanshi.
   panel = {
-    precision = { scale = 2.25; centeredX = 1067; }; # 3840x2160 -> 1707 px
-    zenbook = { scale = 1.75; centeredX = 1097; }; # 2880x1800 -> 1646 px
+    precision = { scale = 2.25; centeredX = 1067; logicalWidth = 1707; }; # 3840x2160 -> 1707 px
+    zenbook = { scale = 1.75; centeredX = 1097; logicalWidth = 1646; }; # 2880x1800 -> 1646 px
   }.${hostName} or null;
 in {
   services.kanshi = lib.mkIf (panel != null) {
     enable = true;
     systemdTarget = "graphical-session.target";
     settings = [
+      {
+        profile = {
+          name = "tv-and-laptop";
+          outputs = [
+            {
+              criteria = "Samsung Electric Company Q70A 0x01000E00";
+              mode = "3840x2160";
+              position = "${toString panel.logicalWidth},0";
+              scale = 2.0;
+            }
+            {
+              criteria = "eDP-1";
+              position = "0,0";
+              scale = panel.scale;
+            }
+          ];
+        };
+      }
       {
         profile = {
           name = "three-screens";
