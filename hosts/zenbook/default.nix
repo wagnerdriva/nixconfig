@@ -15,6 +15,11 @@
   networking.hostName = "zenbook";
   system.stateVersion = "26.05";
 
+  services.tailscale = {
+    enable = true;
+    openFirewall = true;
+  };
+
   boot.loader.timeout = 3;
 
   # The built-in keyboard is ABNT2. The systemd initrd also applies this

@@ -106,6 +106,11 @@ O script destrutivo não deve ser executado antes da revisão descrita em
 
 ## Comandos depois da instalação
 
+O Zenbook instala o Tailscale e inicia `tailscaled` automaticamente. Depois de
+aplicar a configuração, conecte a máquina à sua conta com `sudo tailscale up`
+e abra o link de autenticação informado. Confira a conexão com `tailscale status`.
+A autenticação fica local em `/var/lib/tailscale`, fora do repositório.
+
 Aplicar uma alteração:
 
 ```bash
