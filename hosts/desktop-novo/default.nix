@@ -2,13 +2,14 @@
   imports = [
     ./hardware.nix
     ./migration.nix
+    ./jarvis.nix
+    ./tailscale.nix
     ../../modules/nixos/snapshots.nix
     ../../modules/nixos/base.nix
     ../../modules/nixos/desktop.nix
     ../../modules/nixos/docker.nix
     ../../modules/nixos/netbird.nix
     ../../modules/nixos/nix-ld.nix
-    ../../modules/nixos/zerotier.nix
   ];
 
   networking.hostName = "servidor-principal";
