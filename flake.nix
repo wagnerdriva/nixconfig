@@ -75,6 +75,7 @@
                     ai-memory.packages.${system}.default;
                   herdrPackage = herdr.packages.${system}.default;
                   herdrPiExtension = "${herdr}/src/integration/assets/pi/herdr-agent-state.ts";
+                  herdrOpencodeAssets = "${herdr}/src/integration/assets/opencode";
                   queryOnPackage = if minimalAgentSetup then null else
                     query-on.packages.${system}.default;
                   inherit minimalAgentSetup;

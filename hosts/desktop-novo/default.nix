@@ -28,6 +28,8 @@
   users.users.${primaryUser} = {
     uid = 1000;
     group = "users";
+    # Keep the user manager (and the Herdr server) running without a login.
+    linger = true;
   };
 
   environment.sessionVariables.NIXOS_OZONE_WL = "1";

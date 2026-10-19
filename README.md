@@ -226,3 +226,18 @@ funções normais.
 
 O teclado mantém `Esc`, `Caps Lock` e `Alt` em suas funções normais.
 `´` + `c` produz `ç` (e `´` + `C` produz `Ç`).
+
+## Herdr no servidor-principal
+
+O servidor-principal roda um servidor Herdr headless persistente
+(`modules/home/herdr-server.nix`, serviço de usuário `herdr`, com linger do
+wagner). Na subida ele garante o workspace `main` (cwd `~/Projects`) com um
+agente `opencode`. A integração OpenCode do Herdr é instalada de forma
+declarativa.
+
+- Do PC: `herdr --remote wagner@servidor-principal`. Reaproveita o servidor
+  da sessão default, sem subir um segundo servidor.
+- Por SSH: `herdr agent list`, `herdr agent prompt opencode "..." --wait`,
+  `herdr agent read opencode`.
+- O serviço não reinicia no switch, porque isso mataria os panes. Para pegar
+  uma versão nova: `systemctl --user restart herdr`.

@@ -275,10 +275,13 @@ in
       };
     };
   };
-  xdg.configFile."opencode/cli.json".text = builtins.toJSON {
+  xdg.configFile."opencode/cli.json".text = builtins.toJSON ({
     "$schema" = "https://opencode.ai/v2/cli.json";
     theme = { name = "nord"; mode = "dark"; };
-  };
+  } // lib.optionalAttrs (hostName == "servidor-principal") {
+    # Herdr V2 TUI plugin (modules/home/herdr-server.nix).
+    plugins = [ "./herdr-opencode" ];
+  });
 
   # Keep the user-local launcher in sync with Home Manager package updates.
   home.file.".local/bin/codex" = lib.mkIf enableCodexClaude { source = "${codex-driva}/bin/codex"; };
