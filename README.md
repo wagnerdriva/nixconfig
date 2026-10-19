@@ -95,6 +95,18 @@ A credencial compartilhada por esses clientes fica somente na máquina, em
 `~/.config/driva/proxy-key`, com permissão `0600`. Esse arquivo não pertence ao
 repo e nunca passa pelo Nix store.
 
+O OpenCode CLI v2 (`opencode`) também usa essa chave e o proxy Driva, com a VPN
+conectada. O modelo padrão é `driva/gpt-6.1-sol`; use `/models` para selecionar
+GPT, GLM ou Claude. GPT e GLM usam Responses, enquanto Claude usa
+Anthropic Messages no provedor `driva-claude`. `opencode models` lista o
+catálogo e `opencode run "sua pergunta"` executa um pedido pelo terminal.
+O Home Manager mantém `~/.config/opencode/opencode.json` e `cli.json`, incluindo
+o tema Nord. Para atualizar a versão, altere `version` e `hash` em
+`packages/opencode.nix` e aplique um rebuild. A instalação usa o pacote nativo
+oficial `@opencode/cli-linux-x64`, pois as releases V1 do GitHub têm outro ciclo.
+O catálogo do OpenCode omite Kimi, ausente do inventário atual do proxy, e Fable,
+cujo alias está anunciado mas aponta para um upstream indisponível.
+
 ## Armazenamento planejado
 
 Esta seção se refere aos hosts com layout disko. O `desktop-novo` já está

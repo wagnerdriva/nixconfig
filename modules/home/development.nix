@@ -67,6 +67,7 @@ let
   };
 
   pi-package = pkgs.callPackage ../../packages/pi.nix { };
+  opencode-package = pkgs.callPackage ../../packages/opencode.nix { };
 
   # Levels the Driva catalog advertises for a model. Everything else is marked
   # unsupported so pi never offers an effort the proxy would reject.
@@ -124,6 +125,26 @@ let
     { id = "claude/claude-opus-5-5"; name = "Claude Opus 5.5"; contextWindow = 1000000; }
     { id = "claude/claude-sonnet-5"; name = "Claude Sonnet 5"; contextWindow = 1000000; }
   ];
+
+  # Share the proxy's supported IDs and limits with Pi. V2 uses native provider
+  # packages and reads the credential at runtime, including in its shared server.
+  opencodeModels = models: lib.listToAttrs (map (model: {
+    name = model.id;
+    value = {
+      inherit (model) name;
+      capabilities = {
+        tools = true;
+        input = model.input;
+        output = [ "text" ];
+        reasoning = {
+          supported = true;
+          effort = lib.filter (level: model.thinkingLevelMap.${level} != null)
+            [ "low" "medium" "high" "xhigh" "max" ];
+        };
+      };
+      limit = { context = model.contextWindow; output = model.maxTokens; };
+    };
+  }) models);
 
   driva-proxy-token = pkgs.writeShellScriptBin "driva-proxy-token" ''
     set -eu
@@ -224,6 +245,38 @@ let
   });
 in
 {
+  xdg.configFile."opencode/opencode.json".text = builtins.toJSON {
+    "$schema" = "https://opencode.ai/config.json";
+    model = "driva/gpt-6.1-sol";
+    update = "disable";
+    providers = {
+      driva = {
+        name = "Driva Proxy";
+        package = "@opencode/ai/providers/openai-compatible-responses";
+        settings = {
+          baseURL = "${drivaProxyUrl}/v1";
+          apiKey = "{file:~/.config/driva/proxy-key}";
+        };
+        # Kimi is absent from the proxy's current /v1/models inventory.
+        models = opencodeModels (lib.filter (model: model.id != "kimi-k3") drivaResponsesModels);
+      };
+      driva-claude = {
+        name = "Driva Claude";
+        package = "@opencode/ai/providers/anthropic-compatible";
+        settings = {
+          baseURL = "${drivaProxyUrl}/v1";
+          apiKey = "{file:~/.config/driva/proxy-key}";
+        };
+        # Fable's advertised alias currently resolves to an unavailable upstream.
+        models = opencodeModels (lib.filter (model: model.id != "claude/claude-fable-5-1") drivaMessagesModels);
+      };
+    };
+  };
+  xdg.configFile."opencode/cli.json".text = builtins.toJSON {
+    "$schema" = "https://opencode.ai/v2/cli.json";
+    theme = { name = "nord"; mode = "dark"; };
+  };
+
   # Keep the user-local launcher in sync with Home Manager package updates.
   home.file.".local/bin/codex".source = "${codex-driva}/bin/codex";
   home.file.".local/bin/codex-openai".source = "${codex-openai}/bin/codex-openai";
@@ -456,6 +509,7 @@ in
     codex-driva
     codex-openai
     driva-proxy-token
+    opencode-package
 
     # Both hosts track this repository, so both need the git credential helper.
     gh
