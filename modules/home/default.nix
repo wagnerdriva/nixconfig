@@ -1,4 +1,4 @@
-{ config, lib, pkgs, primaryUser, hostName, minimalAgentSetup, ... }:
+{ config, lib, pkgs, primaryUser, hostName, minimalAgentSetup, meetingsDeskPackage, ... }:
 let
   grokBotPackage = pkgs.callPackage ../../packages/grok-bot.nix { };
 in
@@ -66,6 +66,7 @@ in
       zed-editor
     ] ++ lib.optionals (hostName == "zenbook") [
       grokBotPackage
+      meetingsDeskPackage
     ];
 
     sessionVariables = {

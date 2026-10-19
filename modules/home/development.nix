@@ -66,18 +66,6 @@ let
     };
   };
 
-  orca-app = pkgs.callPackage ../../packages/orca-ide.nix { };
-
-  # Orca ships a Node-based CLI inside the desktop bundle. Run that entrypoint
-  # through the Nix FHS wrapper so it works on NixOS. Bare `orca` remains the
-  # GNOME screen reader; the development IDE is always `orca-ide` on Linux.
-  orca-ide = pkgs.writeShellScriptBin "orca-ide" ''
-    export ELECTRON_RUN_AS_NODE=1
-    exec ${orca-app}/bin/orca-ide-app \
-      ${orca-app.contents}/resources/app.asar.unpacked/out/cli/index.js \
-      "$@"
-  '';
-
   pi-package = pkgs.callPackage ../../packages/pi.nix { };
 
   # Levels the Driva catalog advertises for a model. Everything else is marked
@@ -444,7 +432,7 @@ in
   };
 
   # Refresh native hook commands when the pinned package changes. The upstream
-  # installer merges with existing Codex/Orca hooks and backs up edited files.
+  # installer merges with existing Codex hooks and backs up edited files.
   home.activation.aiMemory = lib.mkIf (!minimalAgentSetup)
     (lib.hm.dag.entryAfter [ "writeBoundary" ] ''
     if [ ! -f "${config.xdg.dataHome}/ai-memory/config.toml" ]; then
@@ -486,8 +474,6 @@ in
   ] ++ lib.optional enablePi pi-driva ++ lib.optionals (!minimalAgentSetup) [
     (callPackage ../../packages/chatgpt.nix { codexCli = codex-driva; })
     aiMemoryPackage
-    orca-app
-    orca-ide
 
     # Base useful for local development and agent tools.
     pnpm
@@ -510,7 +496,6 @@ in
     ANTHROPIC_DEFAULT_FABLE_MODEL = "claude/claude-fable-5-1";
     CLAUDE_CODE_DISABLE_ADAPTIVE_THINKING = "1";
     CLAUDE_CODE_DISABLE_AUTO_MEMORY = "1";
-    ORCA_CLI_COMMAND = "orca-ide";
   };
 
   programs.direnv = lib.mkIf (!minimalAgentSetup) {

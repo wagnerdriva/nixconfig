@@ -151,6 +151,23 @@
         "type": "github"
       }
     },
+    "meetings-desk": {
+      "flake": false,
+      "locked": {
+        "lastModified": 1792414830,
+        "narHash": "sha256-tXCLUNEZFHigGTD2Vg/Cf8FrO6vWSvXRW/Z+i0owmqU=",
+        "ref": "refs/heads/main",
+        "rev": "00ab5b3fd75c97d080b9539016a496d6a1bbeee2",
+        "revCount": 137,
+        "type": "git",
+        "url": "https://github.com/Driva-tecnologia/meetings-desk.git"
+      },
+      "original": {
+        "rev": "00ab5b3fd75c97d080b9539016a496d6a1bbeee2",
+        "type": "git",
+        "url": "https://github.com/Driva-tecnologia/meetings-desk.git"
+      }
+    },
     "niri-flake": {
       "inputs": {
         "niri-stable": "niri-stable",
@@ -317,6 +334,7 @@
         "dms": "dms",
         "herdr": "herdr",
         "home-manager": "home-manager",
+        "meetings-desk": "meetings-desk",
         "niri-flake": "niri-flake",
         "nixpkgs": "nixpkgs_4",
         "query-on": "query-on"

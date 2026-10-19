@@ -8,6 +8,11 @@
 
     herdr.url = "github:herdrdev/herdr";
 
+    meetings-desk = {
+      url = "git+https://github.com/Driva-tecnologia/meetings-desk.git?rev=00ab5b3fd75c97d080b9539016a496d6a1bbeee2";
+      flake = false;
+    };
+
     query-on = {
       url = "git+https://github.com/ramosrafh/query-on?ref=main";
       inputs.nixpkgs.follows = "nixpkgs";
@@ -34,10 +39,16 @@
 
   };
 
-  outputs = { nixpkgs, home-manager, disko, niri-flake, ai-memory, dms, herdr, query-on, ... }:
+  outputs = { nixpkgs, home-manager, disko, niri-flake, ai-memory, dms, herdr, query-on, meetings-desk, ... }:
     let
       system = "x86_64-linux";
       primaryUser = "wagner";
+      meetingsDeskPackage = (import nixpkgs {
+        inherit system;
+        config.allowUnfreePredicate = pkg: nixpkgs.lib.getName pkg == "driva-meetings";
+      }).callPackage ./packages/meetings-desk.nix {
+        src = meetings-desk;
+      };
 
       mkConfiguration = { host, hostName, agentProfile ? hostName, minimalAgentSetup ? false }:
         nixpkgs.lib.nixosSystem {
@@ -59,7 +70,7 @@
                 backupFileExtension = "hm-backup";
                 users.${primaryUser} = import ./modules/home;
                 extraSpecialArgs = {
-                  inherit primaryUser hostName agentProfile;
+                  inherit primaryUser hostName agentProfile meetingsDeskPackage;
                   aiMemoryPackage = if minimalAgentSetup then null else
                     ai-memory.packages.${system}.default;
                   herdrPackage = herdr.packages.${system}.default;
@@ -96,6 +107,9 @@
         };
       };
 
-      packages.${system}.disko = disko.packages.${system}.disko;
+      packages.${system} = {
+        disko = disko.packages.${system}.disko;
+        meetings-desk = meetingsDeskPackage;
+      };
     };
 }

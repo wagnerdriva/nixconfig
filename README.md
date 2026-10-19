@@ -49,13 +49,22 @@ depende das informações de terminal repassadas pelo Herdr.
 
 ## Ferramentas de desenvolvimento
 
-O Home Manager instala Zed (`zed`), Orca (`orca-ide`) e Query On (`query-on`)
+O Home Manager instala Zed (`zed`) e Query On (`query-on`)
 nas máquinas de uso diário. Query On é um cliente nativo para PostgreSQL e
 ClickHouse. Também são instalados Codex, Claude Code, `btop`, Node.js, pnpm e
 utilitários básicos de desenvolvimento. `codex` já abre usando o proxy da
 Driva; `codex-openai`
 preserva o cliente sem esse override.
 O Zenbook também instala o cliente desktop Grok Bot para Linux x64.
+O Driva Meetings (`mind-meet-desktop`) também é instalado no Zenbook, com o
+nome **Driva Meetings** no menu de aplicativos. O pacote é compilado do código
+fixado no input `meetings-desk`, com os hashes das dependências em
+`packages/meetings-desk.nix`. O repositório é privado: em uma máquina nova,
+autentique o Git com `gh auth login` e `gh auth setup-git` antes do rebuild.
+O áudio usa o PipeWire/PulseAudio e a sessão é salva no GNOME Keyring, já
+habilitados pelo sistema. O log fica em
+`~/.local/share/io.driva.meetings.desktop/logs/app.log`.
+
 O Home Manager também persiste `model_provider = "driva_proxy"` no arquivo de
 configuração do Codex, preservando as demais preferências. O app recarrega esse
 arquivo ao criar conversas; apenas definir o provedor no wrapper não basta.
