@@ -145,6 +145,11 @@ let
             [ "low" "medium" "high" "xhigh" "max" ];
         };
       };
+      # Use xhigh for new OpenCode sessions when the proxy advertises it for
+      # the model. Models with a lower ceiling keep the provider default.
+      settings = lib.optionalAttrs (model.thinkingLevelMap.xhigh != null) {
+        reasoningEffort = "xhigh";
+      };
       limit = { context = model.contextWindow; output = model.maxTokens; };
     };
   }) models);
