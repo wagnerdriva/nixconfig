@@ -5,9 +5,10 @@ let
 
   codexVersion = "0.162.1";
   enablePi = agentProfile != "ryzen";
-  # servidor-principal runs OpenCode and Claude Code via the Driva proxy;
-  # Codex, plus its launchers, settings and hooks, stays on other hosts.
+  # servidor-principal uses Claude Code directly with Anthropic. OpenCode
+  # keeps the Driva proxy, and Codex stays on the other hosts.
   enableCodex = hostName != "servidor-principal";
+  useClaudeProxy = hostName != "servidor-principal";
 
   # Reuse Sol's Codex metadata for the proxy's separate 6.1 model ID. Fable's
   # unqualified alias routes to an unavailable upstream, so Ryzen uses the
@@ -553,7 +554,7 @@ in
     fd
   ];
 
-  home.sessionVariables = {
+  home.sessionVariables = lib.optionalAttrs useClaudeProxy {
     ANTHROPIC_BASE_URL = drivaProxyUrl;
     ANTHROPIC_DEFAULT_OPUS_MODEL = "claude/claude-opus-5-5";
     ANTHROPIC_DEFAULT_SONNET_MODEL = "claude/claude-sonnet-5";
@@ -581,16 +582,29 @@ in
       claude-glm = "env ANTHROPIC_MODEL=glm/opus claude";
     };
 
-    interactiveShellInit = lib.mkAfter ''
+    interactiveShellInit = lib.mkAfter (''
       # Clear a value inherited by the graphical session before launching
       # Claude from an interactive shell.
       set -e CLAUDE_CODE_EFFORT_LEVEL
-
+    '' + (if useClaudeProxy then ''
       # The key is copied privately to this machine and never enters Git or
       # the Nix store. Both Claude Code and Codex use the same proxy account.
       if test -r "${proxyKeyFile}"
         set -gx ANTHROPIC_API_KEY (string trim < "${proxyKeyFile}")
       end
-    '';
+    '' else ''
+      # Drop Driva overrides inherited from an older graphical/Herdr session,
+      # without discarding credentials or models configured for Anthropic.
+      if test "$ANTHROPIC_BASE_URL" = "${drivaProxyUrl}"
+        set -e ANTHROPIC_BASE_URL
+        set -e ANTHROPIC_API_KEY
+        set -e ANTHROPIC_AUTH_TOKEN
+      end
+      for name in ANTHROPIC_MODEL ANTHROPIC_DEFAULT_OPUS_MODEL ANTHROPIC_DEFAULT_SONNET_MODEL ANTHROPIC_DEFAULT_HAIKU_MODEL ANTHROPIC_DEFAULT_FABLE_MODEL
+        if set -q $name; and string match -q 'claude/*' -- $$name
+          set -e $name
+        end
+      end
+    ''));
   };
 }
