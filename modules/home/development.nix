@@ -70,6 +70,7 @@ let
     };
   };
 
+  claude-code-package = pkgs.callPackage ../../packages/claude-code.nix { };
   pi-package = pkgs.callPackage ../../packages/pi.nix { };
   opencode-package = pkgs.callPackage ../../packages/opencode.nix { };
 
@@ -443,8 +444,8 @@ in
     };
   }; };
 
-  # Claude Code is updated outside Nix, so merge the theme preference into its
-  # mutable settings file without replacing any API, permission, or hook data.
+  # Merge the theme preference into Claude Code's mutable settings file without
+  # replacing any API, permission, or hook data.
   home.activation.claudeTheme = lib.hm.dag.entryAfter [ "writeBoundary" ] ''
     run ${pkgs.python3}/bin/python - "${config.home.homeDirectory}/.claude/settings.json" <<'PY'
     import json, os, pathlib, shutil, tempfile, sys
@@ -520,7 +521,7 @@ in
     codex-driva
     codex-openai
   ] ++ [
-    claude-code
+    claude-code-package
     driva-proxy-token
     opencode-package
 
