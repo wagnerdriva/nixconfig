@@ -81,6 +81,9 @@ Depois de alterar este wrapper, aplique a configuração do host uma vez com
 `sudo nixos-rebuild switch --flake ~/nixos-config#ryzen`.
 Para Claude Code, há também os aliases `claude-max`, `claude-codex` e
 `claude-glm`. O tema Nord desses clientes é persistido pelo Home Manager.
+No `servidor-principal`, Claude Code (`claude`) e OpenCode usam o proxy Driva;
+Codex continua desabilitado. O Claude usa os aliases de modelos do proxy e lê
+a chave local ao iniciar uma sessão interativa do Fish.
 
 O Pi (`pi`) também abre usando o proxy da Driva e é instalado nos dois hosts.
 O Home Manager escreve `~/.pi/agent/models.json` com o catálogo do proxy: os

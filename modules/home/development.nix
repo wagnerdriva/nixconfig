@@ -5,9 +5,9 @@ let
 
   codexVersion = "0.162.1";
   enablePi = agentProfile != "ryzen";
-  # servidor-principal runs only OpenCode (via the Driva proxy); Codex and
-  # Claude Code, plus their launchers, settings and hooks, stay on other hosts.
-  enableCodexClaude = hostName != "servidor-principal";
+  # servidor-principal runs OpenCode and Claude Code via the Driva proxy;
+  # Codex, plus its launchers, settings and hooks, stays on other hosts.
+  enableCodex = hostName != "servidor-principal";
 
   # Reuse Sol's Codex metadata for the proxy's separate 6.1 model ID. Fable's
   # unqualified alias routes to an unavailable upstream, so Ryzen uses the
@@ -289,12 +289,12 @@ in
   });
 
   # Keep the user-local launcher in sync with Home Manager package updates.
-  home.file.".local/bin/codex" = lib.mkIf enableCodexClaude { source = "${codex-driva}/bin/codex"; };
-  home.file.".local/bin/codex-openai" = lib.mkIf enableCodexClaude { source = "${codex-openai}/bin/codex-openai"; };
+  home.file.".local/bin/codex" = lib.mkIf enableCodex { source = "${codex-driva}/bin/codex"; };
+  home.file.".local/bin/codex-openai" = lib.mkIf enableCodex { source = "${codex-openai}/bin/codex-openai"; };
 
   # Desktop conversations reload the user config, so CLI overrides alone do not
   # reliably select the provider. Preserve the app's other mutable settings.
-  home.activation.codexProxy = lib.mkIf enableCodexClaude (lib.hm.dag.entryAfter [ "writeBoundary" ] ''
+  home.activation.codexProxy = lib.mkIf enableCodex (lib.hm.dag.entryAfter [ "writeBoundary" ] ''
     run ${pkgs.python3.withPackages (ps: [ ps.tomlkit ])}/bin/python \
       - "${config.home.homeDirectory}/.codex/config.toml" ${codexProxySettings} <<'PY'
     import json, os, pathlib, shutil, sys, tempfile
@@ -396,7 +396,7 @@ in
     source = herdrPiExtension;
   };
 
-  home.file.".claude/themes/nord.json" = lib.mkIf enableCodexClaude { text = builtins.toJSON {
+  home.file.".claude/themes/nord.json" = { text = builtins.toJSON {
     name = "Nord";
     base = "dark";
     overrides = {
@@ -444,7 +444,7 @@ in
 
   # Claude Code is updated outside Nix, so merge the theme preference into its
   # mutable settings file without replacing any API, permission, or hook data.
-  home.activation.claudeTheme = lib.mkIf enableCodexClaude (lib.hm.dag.entryAfter [ "writeBoundary" ] ''
+  home.activation.claudeTheme = lib.hm.dag.entryAfter [ "writeBoundary" ] ''
     run ${pkgs.python3}/bin/python - "${config.home.homeDirectory}/.claude/settings.json" <<'PY'
     import json, os, pathlib, shutil, tempfile, sys
 
@@ -478,7 +478,7 @@ in
             if os.path.exists(temporary):
                 os.unlink(temporary)
     PY
-  '');
+  '';
 
   systemd.user.services.ai-memory = lib.mkIf (!minimalAgentSetup) {
     Unit.Description = "Local shared memory for coding agents";
@@ -497,7 +497,7 @@ in
 
   # Refresh native hook commands when the pinned package changes. The upstream
   # installer merges with existing Codex hooks and backs up edited files.
-  home.activation.aiMemory = lib.mkIf (!minimalAgentSetup && enableCodexClaude)
+  home.activation.aiMemory = lib.mkIf (!minimalAgentSetup && enableCodex)
     (lib.hm.dag.entryAfter [ "writeBoundary" ] ''
     if [ ! -f "${config.xdg.dataHome}/ai-memory/config.toml" ]; then
       run ${aiMemoryPackage}/bin/ai-memory --data-dir "${config.xdg.dataHome}/ai-memory" init
@@ -515,11 +515,11 @@ in
       --server-url http://127.0.0.1:49374 --project-strategy repo-root --apply
   '');
 
-  home.packages = with pkgs; lib.optionals enableCodexClaude [
-    claude-code
+  home.packages = with pkgs; lib.optionals enableCodex [
     codex-driva
     codex-openai
   ] ++ [
+    claude-code
     driva-proxy-token
     opencode-package
 
@@ -553,13 +553,13 @@ in
     fd
   ];
 
-  home.sessionVariables = lib.optionalAttrs enableCodexClaude {
+  home.sessionVariables = {
     ANTHROPIC_BASE_URL = drivaProxyUrl;
-  } // lib.optionalAttrs (!minimalAgentSetup) {
     ANTHROPIC_DEFAULT_OPUS_MODEL = "claude/claude-opus-5-5";
     ANTHROPIC_DEFAULT_SONNET_MODEL = "claude/claude-sonnet-5";
     ANTHROPIC_DEFAULT_HAIKU_MODEL = "claude/claude-haiku-4-5-20251001";
     ANTHROPIC_DEFAULT_FABLE_MODEL = "claude/claude-fable-5-1";
+  } // lib.optionalAttrs (!minimalAgentSetup) {
     CLAUDE_CODE_DISABLE_ADAPTIVE_THINKING = "1";
     CLAUDE_CODE_DISABLE_AUTO_MEMORY = "1";
   };
@@ -581,7 +581,7 @@ in
       claude-glm = "env ANTHROPIC_MODEL=glm/opus claude";
     };
 
-    interactiveShellInit = lib.mkIf enableCodexClaude (lib.mkAfter ''
+    interactiveShellInit = lib.mkAfter ''
       # Clear a value inherited by the graphical session before launching
       # Claude from an interactive shell.
       set -e CLAUDE_CODE_EFFORT_LEVEL
@@ -591,6 +591,6 @@ in
       if test -r "${proxyKeyFile}"
         set -gx ANTHROPIC_API_KEY (string trim < "${proxyKeyFile}")
       end
-    '');
+    '';
   };
 }
