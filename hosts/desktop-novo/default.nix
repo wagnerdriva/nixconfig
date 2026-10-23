@@ -4,6 +4,7 @@
     ./migration.nix
     ./jarvis.nix
     ./tailscale.nix
+    ./firewall.nix
     ../../modules/nixos/snapshots.nix
     ../../modules/nixos/base.nix
     ../../modules/nixos/desktop.nix
