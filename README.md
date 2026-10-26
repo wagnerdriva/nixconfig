@@ -81,6 +81,16 @@ Depois de alterar este wrapper, aplique a configuração do host uma vez com
 `sudo nixos-rebuild switch --flake ~/nixos-config#ryzen`.
 Para Claude Code, há também os aliases `claude-max`, `claude-codex` e
 `claude-glm`. O tema Nord desses clientes é persistido pelo Home Manager.
+O pacote Nix do Claude Code está fixado em **2.1.304**, independentemente da
+versão do canal NixOS. Para atualizar, consulte
+`https://downloads.claude.ai/claude-code-releases/latest` e ajuste a versão e
+os checksums do `manifest.json` oficial em `packages/claude-code.nix`.
+Depois aplique a configuração do host: o pacote no Nix Store não se autoatualiza.
+No `servidor-principal`, Claude Code (`claude`) acessa a Anthropic diretamente,
+sem o proxy Driva, sua chave ou seus aliases de modelos. Abra `claude` e use
+`/login` para autenticar sua conta. O Fish também limpa overrides antigos do
+proxy herdados pela sessão. OpenCode continua no proxy e Codex desabilitado;
+o uso de proxy nos outros hosts é preservado.
 
 O Pi (`pi`) também abre usando o proxy da Driva e é instalado nos dois hosts.
 O Home Manager escreve `~/.pi/agent/models.json` com o catálogo do proxy: os
@@ -226,3 +236,18 @@ funções normais.
 
 O teclado mantém `Esc`, `Caps Lock` e `Alt` em suas funções normais.
 `´` + `c` produz `ç` (e `´` + `C` produz `Ç`).
+
+## Herdr no servidor-principal
+
+O servidor-principal roda um servidor Herdr headless persistente
+(`modules/home/herdr-server.nix`, serviço de usuário `herdr`, com linger do
+wagner). Na subida ele garante o workspace `main` (cwd `~/Projects`) com um
+agente `opencode`. A integração OpenCode do Herdr é instalada de forma
+declarativa.
+
+- Do PC: `herdr --remote wagner@servidor-principal`. Reaproveita o servidor
+  da sessão default, sem subir um segundo servidor.
+- Por SSH: `herdr agent list`, `herdr agent prompt opencode "..." --wait`,
+  `herdr agent read opencode`.
+- O serviço não reinicia no switch, porque isso mataria os panes. Para pegar
+  uma versão nova: `systemctl --user restart herdr`.

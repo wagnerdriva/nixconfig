@@ -4,6 +4,7 @@
     ./migration.nix
     ./jarvis.nix
     ./tailscale.nix
+    ./firewall.nix
     ../../modules/nixos/snapshots.nix
     ../../modules/nixos/base.nix
     ../../modules/nixos/desktop.nix
@@ -28,6 +29,8 @@
   users.users.${primaryUser} = {
     uid = 1000;
     group = "users";
+    # Keep the user manager (and the Herdr server) running without a login.
+    linger = true;
   };
 
   environment.sessionVariables.NIXOS_OZONE_WL = "1";

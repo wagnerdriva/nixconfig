@@ -5,6 +5,8 @@ in
 {
   imports = lib.optionals (!minimalAgentSetup) [
     ./agent-instructions.nix
+  ] ++ lib.optionals (hostName == "servidor-principal") [
+    ./herdr-server.nix
   ] ++ [
     ./celluloid.nix
     ./clipboard.nix
