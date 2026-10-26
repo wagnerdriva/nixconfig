@@ -5,11 +5,11 @@
 }:
 let
   pname = "grok-bot";
-  version = "0.71.2";
+  version = "0.75.8";
 
   src = fetchurl {
-    url = "https://downloads.cursor.com/grokbot/stable/92808c0ad869b2e3725dbc3b8fa2fcc991687502/linux/x64/Grok_Bot_${version}.AppImage";
-    hash = "sha256-a8SI+sg9tWbojxx1BzkBLbceGPS8Z+af6Tz/M0nZH+g=";
+    url = "https://downloads.cursor.com/grokbot/stable/039d88c52f45f8af72fbe7379bc426c171edf62b/linux/x64/Grok_Bot_${version}.AppImage";
+    hash = "sha256-OM1gaqpIUIyZazUGjKNMfllvXBGuN3Zg2vokoa3hGGM=";
   };
 
   contents = appimageTools.extractType2 {

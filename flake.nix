@@ -50,7 +50,7 @@
         src = meetings-desk;
       };
 
-      mkConfiguration = { host, hostName, agentProfile ? hostName, minimalAgentSetup ? false }:
+      mkConfiguration = { host, hostName, agentProfile ? hostName, minimalAgentSetup ? false, extraModules ? [ ] }:
         nixpkgs.lib.nixosSystem {
           inherit system;
           specialArgs = { inherit primaryUser hostName minimalAgentSetup; };
@@ -82,7 +82,7 @@
                 };
               };
             }
-          ];
+          ] ++ extraModules;
         };
     in {
       nixosConfigurations = {
@@ -93,6 +93,7 @@
         zenbook = mkConfiguration {
           host = ./hosts/zenbook;
           hostName = "zenbook";
+          extraModules = [ ./modules/nixos/grok-bot-autoupdate.nix ];
         };
         ryzen = mkConfiguration {
           host = ./hosts/ryzen;
