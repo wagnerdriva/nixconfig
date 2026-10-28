@@ -7,6 +7,7 @@ in
     ./agent-instructions.nix
   ] ++ lib.optionals (hostName == "servidor-principal") [
     ./herdr-server.nix
+    ./msg-relay.nix
   ] ++ [
     ./celluloid.nix
     ./clipboard.nix
