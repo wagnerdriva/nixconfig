@@ -133,7 +133,7 @@ let
       notify-send \
         --app-name="Gravação de tela" \
         "Gravação iniciada" \
-        "Aperte Windows + Shift + 5 novamente para salvar."
+        "Aperte Alt + Shift + 5 novamente para salvar."
 
       set +e
       wait "$recorder_pid"

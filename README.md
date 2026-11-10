@@ -216,8 +216,7 @@ nvidia-offload programa
 
 ## Primeiros atalhos do Niri
 
-O `Mod` do Niri é a tecla `Super` (Windows). As teclas `Alt` permanecem em suas
-funções normais.
+O `Mod` do Niri é a tecla `Alt`.
 
 - `Mod+Enter`: terminal;
 - `Mod+R`: buscar aplicativo;
@@ -234,7 +233,7 @@ funções normais.
 - `Mod+L`: bloquear a sessão;
 - `Mod+Shift+/`: mostrar todos os atalhos.
 
-O teclado mantém `Esc`, `Caps Lock` e `Alt` em suas funções normais.
+O teclado mantém `Esc` e `Caps Lock` em suas funções normais.
 `´` + `c` produz `ç` (e `´` + `C` produz `Ç`).
 
 ## Herdr no servidor-principal

@@ -32,6 +32,7 @@ in {
     }.${hostName} or { };
 
     input = {
+      mod-key = "Alt";
       power-key-handling.enable = false;
       focus-follows-mouse.enable = false;
       mouse.accel-speed = 0.15;
