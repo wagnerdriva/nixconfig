@@ -1,6 +1,7 @@
 { config, lib, pkgs, primaryUser, hostName, minimalAgentSetup, meetingsDeskPackage, ... }:
 let
   grokBotPackage = pkgs.callPackage ../../packages/grok-bot.nix { };
+  rakazoPackage = pkgs.callPackage ../../packages/rakazo.nix { };
 in
 {
   imports = lib.optionals (!minimalAgentSetup) [
@@ -50,6 +51,10 @@ in
       source = "${grokBotPackage}/bin/grok-bot";
     };
 
+    file.".local/bin/rakazo" = lib.mkIf (hostName == "zenbook") {
+      source = "${rakazoPackage}/bin/rakazo";
+    };
+
     packages = with pkgs; [
       celluloid
       eog
@@ -68,6 +73,7 @@ in
       zed-editor
     ] ++ lib.optionals (hostName == "zenbook") [
       grokBotPackage
+      rakazoPackage
       meetingsDeskPackage
     ];
 
@@ -94,6 +100,14 @@ in
 
   xdg.dataFile."icons/hicolor/1024x1024/apps/grok-bot.png" = lib.mkIf (hostName == "zenbook") {
     source = "${grokBotPackage}/share/icons/hicolor/1024x1024/apps/grok-bot.png";
+  };
+
+  xdg.dataFile."applications/rakazo.desktop" = lib.mkIf (hostName == "zenbook") {
+    source = "${rakazoPackage}/share/applications/rakazo.desktop";
+  };
+
+  xdg.dataFile."icons/hicolor/1024x1024/apps/rakazo.png" = lib.mkIf (hostName == "zenbook") {
+    source = "${rakazoPackage}/share/icons/hicolor/1024x1024/apps/rakazo.png";
   };
 
   # The desktop portal uses this cache to discover OAuth callback handlers.

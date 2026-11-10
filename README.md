@@ -155,6 +155,11 @@ o serviço `home-manager-wagner` reaplica a configuração antiga e pode remover
 os atalhos novos. Depois do `switch`, feche e reabra o Grok Bot para executar
 o novo binário.
 
+O Rakazo também é instalado no Zenbook como aplicativo, com ícone no menu e
+comando `rakazo`. Para atualizar, altere `version` e `hash` em
+[`packages/rakazo.nix`](packages/rakazo.nix) e aplique o sistema. O pacote pode
+ser compilado separadamente com `nix build .#rakazo`.
+
 Para atualizar o Pi, altere `version` e `hash` em
 [`packages/pi.nix`](packages/pi.nix), usando o hash SRI do asset
 `pi-linux-x64.tar.gz` da release desejada. Depois valide e aplique:

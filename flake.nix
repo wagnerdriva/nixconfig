@@ -112,6 +112,7 @@
       packages.${system} = {
         disko = disko.packages.${system}.disko;
         meetings-desk = meetingsDeskPackage;
+        rakazo = (import nixpkgs { inherit system; }).callPackage ./packages/rakazo.nix { };
       };
     };
 }
