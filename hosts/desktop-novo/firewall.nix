@@ -2,10 +2,10 @@
 let
   # Ingress policy for servidor-principal (WP-67): outbound is free; inbound is
   # accepted only on tailscale0 (trusted, see ./tailscale.nix). NetBird (wt0)
-  # only gets the Driva proxy middleware; LAN and every other interface get
-  # nothing.
+  # gets the Driva proxy middleware (8317) and the Rakazo reverse proxy / HTTPS
+  # (443, Caddy on bots.driva.io). LAN and every other interface get nothing.
   netbirdIf = config.services.netbird.clients.default.interface;
-  netbirdTCPPorts = [ 8317 ];
+  netbirdTCPPorts = [ 8317 443 ];
 
   # Docker publishes ports on these addresses, which skips the INPUT chain.
   tailscaleAddrs4 = [ "100.116.195.114" ];
