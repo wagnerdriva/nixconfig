@@ -5,11 +5,11 @@
 }:
 let
   pname = "grok-bot";
-  version = "0.75.8";
+  version = "1.1.0";
 
   src = fetchurl {
-    url = "https://downloads.cursor.com/grokbot/stable/039d88c52f45f8af72fbe7379bc426c171edf62b/linux/x64/Grok_Bot_${version}.AppImage";
-    hash = "sha256-OM1gaqpIUIyZazUGjKNMfllvXBGuN3Zg2vokoa3hGGM=";
+    url = "https://downloads.cursor.com/grokbot/stable/83d46d618ef4c12afa17edd8e3c29d6caf046d17/linux/x64/Grok_Bot_${version}.AppImage";
+    hash = "sha256-1w5UaS045tFt3x3Rf7zAeokuzMiQ4KWu38Ow4T5thx0=";
   };
 
   contents = appimageTools.extractType2 {
@@ -21,8 +21,8 @@ appimageTools.wrapType2 {
 
   extraInstallCommands = ''
     install -Dm444 ${contents}/grok-bot.desktop $out/share/applications/grok-bot.desktop
-    substituteInPlace $out/share/applications/grok-bot.desktop \
-      --replace-fail "Exec=AppRun --no-sandbox %U" "Exec=$out/bin/grok-bot --no-sandbox %U"
+    sed -i "s|^Exec=AppRun|Exec=$out/bin/grok-bot|" $out/share/applications/grok-bot.desktop
+    grep -q "^Exec=$out/bin/grok-bot" $out/share/applications/grok-bot.desktop
     install -Dm444 \
       ${contents}/resources/icon.png \
       $out/share/icons/hicolor/1024x1024/apps/grok-bot.png
