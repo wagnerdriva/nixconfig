@@ -1,6 +1,6 @@
 { config, lib, pkgs, aiMemoryPackage ? null, herdrPackage, herdrPiExtension, minimalAgentSetup, hostName, agentProfile ? hostName, ... }:
 let
-  drivaProxyUrl = "http://vpn-driva.netbird.driva.io:8317";
+  drivaProxyUrl = "http://ai-server.netbird.driva.io:8317";
   proxyKeyFile = "$HOME/.config/driva/proxy-key";
 
   codexVersion = "0.162.1";
