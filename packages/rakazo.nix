@@ -6,11 +6,11 @@
 }:
 let
   pname = "rakazo";
-  version = "0.8.0";
+  version = "0.11.0";
 
   src = fetchurl {
     url = "https://github.com/elie222/rakazo/releases/download/v${version}/Rakazo-${version}.AppImage";
-    hash = "sha256-PKuU/wfhsm7UkQVve8hZIQ6c8F8dpaCxFmr0MwjjLl4=";
+    hash = "sha256-nrxYnH1nh41eeBQM6hFur1bQtqtO+ylJV/2jU2JkI5s=";
   };
 
   contents = appimageTools.extractType2 {
