@@ -77,6 +77,13 @@ in
       ip46tables -t raw -I PREROUTING 1 -j ingress-pre
       ip46tables -t mangle -I INPUT 1 -j ingress-in
       ip46tables -t mangle -I FORWARD 1 -j ingress-fwd
+
+      # Docker containers (Rakazo API/worker) reach the Driva proxy middleware
+      # on the host via host.docker.internal:8317 -> docker0 gateway 172.17.0.1.
+      # The proxy's own API key gates use; no other host port opens to docker
+      # bridges, and wt0:8317 stays NetBird-only.
+      iptables -w -I nixos-fw -i br-+ -p tcp -d 172.17.0.1 --dport 8317 -j nixos-fw-accept
+      iptables -w -I nixos-fw -i docker0 -p tcp -d 172.17.0.1 --dport 8317 -j nixos-fw-accept
     '';
     extraStopCommands = removeIngressChains;
   };
